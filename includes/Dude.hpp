@@ -7,6 +7,8 @@
 #include "System/Vec2D.hpp"
 #include "System/Shape.hpp"
 
+#include "Weapon.hpp"
+
 class World;
 
 class Dude {
@@ -32,9 +34,7 @@ public:
 	Vec2D GetPos() {
 		return pos;
 	}
-	void SetPos( Vec2D p ) {
-		pos = p;
-	}
+	void SetPos( Vec2D p );
 	
 	Shape::Rect Bounds();
 	
@@ -56,6 +56,8 @@ private:
 	
 	float max_vel;
 	float max_acc;
+	
+	boost::shared_ptr<Weapon> weapon;
 	
 	World *const world;
 };

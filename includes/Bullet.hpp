@@ -35,18 +35,4 @@ protected:
 	bool can_kill;
 };
 
-class SimpleBullet : public Bullet {
-public:
-	SimpleBullet( Vec2D pos, Vec2D dir );
-	
-	Shape::Rect Bounds() const {
-		return Shape::Rect( info.pos.x, info.pos.y, 1, 1 );
-	}
-	
-	void Update( float dt );
-	void Render();
-private:
-	HgeObj hge;
-};
-
 #endif

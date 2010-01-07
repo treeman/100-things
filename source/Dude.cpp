@@ -1,14 +1,18 @@
 #include "includes/Dude.hpp"
 #include "includes/World.hpp"
+#include "includes/SimpleWeapon.hpp"
 
-Dude::Dude( World *const _world ) : pos( 20, 560 ), world( _world )
-{
-	tex.Load( "gfx/dude.png" );
+Dude::Dude( World *const _world ) : world( _world )
+{tex.Load( "gfx/dude.png" );
 	spr.reset( new hgeSprite( tex, 0, 0, 23, 44 ) );
 	spr->SetHotSpot( 0, 44 );
 	
 	max_acc = 400;
 	max_vel = 200;
+	
+	weapon.reset( new SimpleWeapon() );
+	
+	SetPos( Vec2D( 20, 560 ) );
 }
 
 void Dude::MoveLeft()
@@ -22,12 +26,10 @@ void Dude::MoveRight()
 
 void Dude::Shoot( Vec2D target )
 {
-	Vec2D fire_pos = Vec2D( pos.x + 11.5, pos.y - 22 );
-	Vec2D dir = target - fire_pos;
-	dir.Normalize();
-	
-	boost::shared_ptr<Bullet> bullet( new SimpleBullet( fire_pos, dir ) );
-	world->PushBullet( bullet );
+	boost::shared_ptr<Bullet> bullet = weapon->Shoot( target );
+	if( bullet ) {
+		world->PushBullet( bullet );
+	}
 }
 
 void Dude::Jump()
@@ -43,6 +45,11 @@ void Dude::Duck()
 void Dude::Roll()
 {
 	
+}
+
+void Dude::SetPos( Vec2D p ) {
+	pos = p;
+	weapon->SetPos( p );
 }
 
 Shape::Rect Dude::Bounds()
@@ -61,7 +68,7 @@ void Dude::Update( float dt )
 	vel = new_vel;
 //	vel.TruncateLength( max_vel );
 	const Vec2D new_pos = pos + vel * dt;
-	pos = new_pos;
+	SetPos( new_pos );
 	
 	acc( 0, 0 );
 }

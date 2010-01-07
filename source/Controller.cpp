@@ -8,9 +8,9 @@ Controller::Controller( boost::shared_ptr<Dude> _dude ) : dude( _dude )
 
 bool Controller::HandleEvent( hgeInputEvent &e )
 {
-	if( e.type == INPUT_MBUTTONDOWN && e.key == HGEK_LBUTTON ) {
-		dude->Shoot( Vec2D( e.x, e.y ) );
-	}
+//	if( e.type == INPUT_MBUTTONDOWN && e.key == HGEK_LBUTTON ) {
+//		dude->Shoot( Vec2D( e.x, e.y ) );
+//	}
 	if( e.type == INPUT_KEYDOWN ) {
 		switch( e.key ) {
 			case HGEK_SPACE:
@@ -32,5 +32,10 @@ void Controller::Update( float dt )
 	}
 	if( hge->Input_GetKeyState( HGEK_CTRL ) ) {
 		dude->Duck();
+	}
+	if( hge->Input_GetKeyState( HGEK_LBUTTON ) ) {
+		float mx, my;
+		hge->Input_GetMousePos( &mx, &my );
+		dude->Shoot( Vec2D( mx, my ) );
 	}
 }
