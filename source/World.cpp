@@ -17,7 +17,7 @@ bool alien_gone( boost::shared_ptr<Alien> a )
 	return a->CanKill();
 }
 
-World::World() : dude( new Dude( this ) )
+World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() )
 {
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	const int h = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_height" ) );
@@ -27,7 +27,6 @@ World::World() : dude( new Dude( this ) )
 	
 	ground.reset( new Ground( 0, h - 40, w, 40 ) );
 	
-	arial10.reset( new hgeFont( "fnt/arial10.fnt" ) );
 	InitDators();
 	
 	for( int i = 0; i < 100; ++i ) {
@@ -68,6 +67,8 @@ void World::Update( float dt )
 	
 	bullets.erase( std::remove_if( bullets.begin(), bullets.end(), bullet_gone ), bullets.end() );
 	aliens.erase( std::remove_if( aliens.begin(), aliens.end(), alien_gone ), aliens.end() );
+	
+	notifier->Update( dt );
 }
 void World::Render()
 {
@@ -87,6 +88,8 @@ void World::Render()
 	}
 	
 	ground->Render();
+	
+	notifier->Render();
 	
 	RenderDebug();
 }

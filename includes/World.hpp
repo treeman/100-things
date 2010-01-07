@@ -6,11 +6,13 @@
 
 #include "System/Hge.hpp"
 #include "System/Settings.hpp"
+#include "System/Timer.hpp"
 
 #include "Dude.hpp"
 #include "Bullet.hpp"
 #include "Alien.hpp"
 #include "Ground.hpp"
+#include "Notifier.hpp"
 
 class World {
 public:
@@ -39,6 +41,8 @@ private:
 	Aliens aliens;
 	
 	boost::shared_ptr<hgeFont> arial10;
+	
+	boost::shared_ptr<Notifier> notifier;
 	
 	void RenderDebug();
 	
