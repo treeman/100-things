@@ -12,7 +12,7 @@ bool bullet_gone( boost::shared_ptr<Bullet> b )
 		b->Info().pos.y < 0 || b->Info().pos.y > 600;
 }
 
-bool alien_gone( boost::shared_ptr<Alien> a )
+bool alien_gone( boost::shared_ptr<Enemy> a )
 {
 	return a->CanKill();
 }
@@ -30,13 +30,15 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	InitDators();
 	
 	for( int i = 0; i < 100; ++i ) {
-		boost::shared_ptr<Alien> a( new Alien( Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ))));
-		aliens.push_back( a );
+		boost::shared_ptr<Enemy> a( new Enemy( Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ))));
+		enemies.push_back( a );
 	}
 }
 
 void World::Update( float dt )
 {
+	const int screen_w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
+	
 	dude->Update( dt );
 	if( dude->Bounds().Collision( ground->Bounds() ) ) {
 		dude->SetPos( Vec2D( dude->GetPos().x, ground->Bounds().y ) );
@@ -46,13 +48,31 @@ void World::Update( float dt )
 			dude->SetVel( vel );
 		}
 	}
+	if( dude->GetPos().x < 0 ) {
+		dude->SetPos( Vec2D( 0, dude->GetPos().y ) );
+		
+		Vec2D vel = dude->GetVel();
+		if( vel.x < 0 ) {
+			vel.x = 0;
+			dude->SetVel( vel );
+		}
+	}
+	else if( dude->GetPos().x + dude->Bounds().w > screen_w ) {
+		dude->SetPos( Vec2D( screen_w - dude->Bounds().w, dude->GetPos().y ) );
+		
+		Vec2D vel = dude->GetVel();
+		if( vel.x > 0 ) {
+			vel.x = 0;
+			dude->SetVel( vel );
+		}
+	}
 
 	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 	{
 		b->Update( dt );
 	}
 	
-	BOOST_FOREACH( boost::shared_ptr<Alien> a, aliens )
+	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 	{
 		a->Update( dt );
 		
@@ -67,7 +87,7 @@ void World::Update( float dt )
 	}
 	
 	bullets.erase( std::remove_if( bullets.begin(), bullets.end(), bullet_gone ), bullets.end() );
-	aliens.erase( std::remove_if( aliens.begin(), aliens.end(), alien_gone ), aliens.end() );
+	enemies.erase( std::remove_if( enemies.begin(), enemies.end(), alien_gone ), enemies.end() );
 	
 	notifier->Update( dt );
 }
@@ -83,7 +103,7 @@ void World::Render()
 		b->Render();
 	}
 	
-	BOOST_FOREACH( boost::shared_ptr<Alien> a, aliens )
+	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 	{
 		a->Render();
 	}
@@ -133,7 +153,7 @@ void World::RenderDebug()
 		const Shape::Rect gbox = ground->Bounds();
 		hgeh::render_rect( hge, gbox.x, gbox.y, gbox.x + gbox.w, gbox.y + gbox.h, 0xffffffff );
 		
-		BOOST_FOREACH( boost::shared_ptr<Alien> a, aliens )
+		BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 		{
 			const Shape::Rect box = a->Bounds();
 			hgeh::render_rect( hge, box.x, box.y, box.x + box.w, box.y + box.h, 0xffffffff );

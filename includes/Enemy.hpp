@@ -7,9 +7,9 @@
 #include "System/Vec2D.hpp"
 #include "System/Shape.hpp"
 
-class Alien {
+class Enemy {
 public:
-	Alien( Vec2D pos );
+	Enemy( Vec2D pos );
 	
 	Shape::Rect Bounds();
 	

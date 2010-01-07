@@ -10,7 +10,7 @@
 
 #include "Dude.hpp"
 #include "Bullet.hpp"
-#include "Alien.hpp"
+#include "Enemy.hpp"
 #include "Ground.hpp"
 #include "Notifier.hpp"
 
@@ -37,8 +37,8 @@ private:
 	typedef std::vector<boost::shared_ptr<Bullet> > Bullets;
 	Bullets bullets;
 	
-	typedef std::vector<boost::shared_ptr<Alien> > Aliens;
-	Aliens aliens;
+	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
+	Enemies enemies;
 	
 	boost::shared_ptr<hgeFont> arial10;
 	
