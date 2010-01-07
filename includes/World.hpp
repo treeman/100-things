@@ -44,6 +44,8 @@ private:
 	
 	boost::shared_ptr<Notifier> notifier;
 	
+	void Frag();
+	
 	void RenderDebug();
 	
 	void InitDators();

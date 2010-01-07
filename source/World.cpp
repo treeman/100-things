@@ -61,6 +61,7 @@ void World::Update( float dt )
 			if( a->Bounds().Overlap( b->Bounds() ) ) {
 				a->Kill();
 				b->Kill();
+				Frag();
 			}
 		}
 	}
@@ -92,6 +93,11 @@ void World::Render()
 	notifier->Render();
 	
 	RenderDebug();
+}
+
+void World::Frag()
+{
+	notifier->Add( "Eat my shorts" );
 }
 
 void World::InitDators()

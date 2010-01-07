@@ -2,17 +2,21 @@
 #include "includes/World.hpp"
 #include "includes/SimpleWeapon.hpp"
 
+const float dude_w = 30;
+const float dude_h = 50;
+
 Dude::Dude( World *const _world ) : world( _world )
-{tex.Load( "gfx/dude.png" );
-	spr.reset( new hgeSprite( tex, 0, 0, 23, 44 ) );
-	spr->SetHotSpot( 0, 44 );
+{
+	tex.Load( "gfx/dude.png" );
+	spr.reset( new hgeSprite( tex, 0, 0, dude_w, dude_h ) );
+	spr->SetHotSpot( 0, dude_h );
 	
 	max_acc = 400;
 	max_vel = 200;
 	
 	weapon.reset( new SimpleWeapon() );
 	
-	SetPos( Vec2D( 20, 560 ) );
+	SetPos( Vec2D( 20, 600 - dude_h ) );
 }
 
 void Dude::MoveLeft()
@@ -54,7 +58,7 @@ void Dude::SetPos( Vec2D p ) {
 
 Shape::Rect Dude::Bounds()
 {
-	return Shape::Rect( pos.x, pos.y - 44, 23, 44 );
+	return Shape::Rect( pos.x, pos.y - dude_h, dude_w,dude_h );
 }
 
 void Dude::Update( float dt )
@@ -82,10 +86,10 @@ void Dude::SetOrientation()
 	float mx, my;
 	hge->Input_GetMousePos( &mx, &my );
 	
-	if( mx < pos.x + 11.5 ) {
+	if( mx < pos.x + dude_w / 2 ) {
 		FaceLeft();
 	}
-	else if( mx > pos.x + 11.5 ) {
+	else if( mx > pos.x + dude_w / 2 ) {
 		FaceRight();
 	}
 }

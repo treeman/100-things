@@ -1,14 +1,17 @@
 #include "includes/Alien.hpp"
 
+const float w = 26;
+const float h = 20;
+
 Alien::Alien( Vec2D _pos ) : pos( _pos ), can_kill( false )
 {
-	tex.Load( "gfx/alien.png" );
-	spr.reset( new hgeSprite( tex, 0, 0, 11, 8 ) );
+	tex.Load( "gfx/flyingafro.png" );
+	spr.reset( new hgeSprite( tex, 0, 0, w, h ) );
 }
 
 Shape::Rect Alien::Bounds()
 {
-	return Shape::Rect( pos.x, pos.y, 11, 8 );
+	return Shape::Rect( pos.x, pos.y, w, h );
 }
 	
 void Alien::Update( float dt )
