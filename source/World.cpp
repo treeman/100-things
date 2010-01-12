@@ -22,7 +22,8 @@ bool enemy_out_of_bounds( boost::shared_ptr<Enemy> a )
 	return a->GetPos().x < 0 || a->GetPos().x > 800 || a->GetPos().y < 0 || a->GetPos().y > 600;
 }
 
-World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() )
+World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() ),
+	level_loader( new LevelLoader() )
 {
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	const int h = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_height" ) );
@@ -38,6 +39,8 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 		boost::shared_ptr<Enemy> a( new Enemy( Vec2D( 8 * i, 0 ) ) );
 		enemies.push_back( a );
 	}
+	
+	LoadLevel( level_loader->GetNextLevel() );
 }
 
 void World::Update( float dt )
@@ -91,17 +94,23 @@ void World::Update( float dt )
 			}
 			RandomizeTargetPos( a );
 		}
+		if( a->HasReachedGoal() ) {
+			curr_lvl->GoalReached( a );
+		}
 		
 		a->Update( dt );
 		
 		BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 		{
 			if( a->Bounds().Overlap( b->Bounds() ) ) {
-				a->Kill();
-				b->Kill();
-				Frag();
+				Frag( a, b );
 			}
 		}
+	}
+	
+	if( curr_lvl ) {
+//		curr_lvl->UpdateTargetPos( enemies );
+		curr_lvl->Update( dt );
 	}
 	
 	bullets.erase( std::remove_if( bullets.begin(), bullets.end(), bullet_gone ), bullets.end() );
@@ -146,8 +155,30 @@ void World::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
 	a->SetTargetPos( Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ) ) );
 }
 
-void World::Frag()
+void World::LoadLevel( boost::shared_ptr<Level> lvl )
 {
+	curr_lvl = lvl;
+	curr_lvl->UpdateTargetPos( enemies );
+}
+	
+void World::CheckLevelCompletion()
+{
+	
+}
+void World::LevelCompleted()
+{
+	
+}
+void World::GameOver()
+{
+	
+}
+
+void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bullet )
+{
+	enemy->Kill();
+	bullet->Kill();
+	curr_lvl->EnemyDead( enemy );
 	notifier->Add( "Eat my shorts" );
 }
 

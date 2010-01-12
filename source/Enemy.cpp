@@ -21,6 +21,12 @@ void Enemy::SetTargetPos( Vec2D target )
 	acc = desired - vel;
 	target_pos = target;
 }
+
+bool Enemy::HasReachedGoal()
+{
+	const Vec2D dist = pos - target_pos;
+	return dist.Length() < 3;
+}
 	
 void Enemy::Update( float dt )
 {
@@ -33,11 +39,6 @@ void Enemy::Update( float dt )
 	const Vec2D new_pos = pos + new_vel * dt;
 
 	pos = new_pos;
-	
-	const Vec2D dist = pos - target_pos;
-	if( dist.Length() < 3 ) {
-		SetTargetPos( Vec2D( hge->Random_Float( 0, 800 ), hge->Random_Float( 0, 500 ) ) );
-	}
 }
 void Enemy::Render()
 {

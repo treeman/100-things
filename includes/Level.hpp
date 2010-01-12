@@ -5,11 +5,11 @@
 
 #include "Enemy.hpp"
 
-class World;
+class LevelLoader;
 
 struct EnemyInfo {
 	EnemyInfo() : has_passed( false ) { }
-	
+
 	bool has_passed;
 	float time;
 	
@@ -19,18 +19,35 @@ struct EnemyInfo {
 
 class Level {
 public:
-	Level( World *const world );
+	Level();
+	
+	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
+	
+	void UpdateTargetPos( Enemies enemies );
+	
+	void RandomizeTargetPos( boost::shared_ptr<Enemy> e );
+	void GoalReached( boost::shared_ptr<Enemy> e );
+	void EnemyDead( boost::shared_ptr<Enemy> e );
 	
 	void Update( float dt );
 private:
+	void Copy( const Level &lvl );
+	
+	Vec2D RandomizeTargetPos();
+	
 	typedef std::vector<EnemyInfo> Infos;
 	Infos infos;
 	
-	EnemyInfo *curr_info;
+	Vec2D GetTargetPos();
+	void FreeTargetPos( Vec2D target );
+	
+	size_t curr_info;
 	
 	float level_time;
 	
-	World *const world;
+	friend class LevelLoader;
+	
+	HgeObj hge;
 };
 
 #endif

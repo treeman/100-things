@@ -1,56 +1,69 @@
 #include <boost/foreach.hpp>
 
 #include "includes/Level.hpp"
-#include "includes/World.hpp"
 
 bool has_time_passed( EnemyInfo e )
 {
 	return e.has_passed;
 }
 
-bool is_before( EnemyInfo e1, EnemyInfo e2 )
-{
-	return e1.time < e2.time;
+bool operator < ( const EnemyInfo &i1, const EnemyInfo &i2 ) {
+	return i1.time < i2.time;
 }
 
-Level::Level( World *const _world ) : level_time( 0 ), world( _world )
+Level::Level() : curr_info( 0 ), level_time( 0 )
+{
+	
+}
+
+void Level::UpdateTargetPos( Enemies enemies )
+{
+	EnemyInfo info = infos.at( curr_info );
+	
+	EnemyInfo::Positions::iterator pit = info.positions.begin();
+	Enemies::iterator eit = enemies.begin();
+	
+	for( ; pit != info.positions.end() && eit != enemies.end(); ++pit, ++eit )
+	{
+		(*eit)->SetTargetPos( *pit );
+	}
+	
+	for( ; eit != enemies.end(); ++eit )
+	{
+		RandomizeTargetPos( *eit );
+	}
+}
+
+void Level::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
+{
+	a->SetTargetPos( RandomizeTargetPos() );
+}
+
+void Level::GoalReached( boost::shared_ptr<Enemy> e )
+{
+	
+}
+void Level::EnemyDead( boost::shared_ptr<Enemy> e )
 {
 	
 }
 
 void Level::Update( float dt )
 {
-	if( infos.empty() ) return;
-	
 	level_time += dt;
+}
+
+Vec2D Level::RandomizeTargetPos()
+{
+	return Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ) );
+}
+
+Vec2D Level::GetTargetPos()
+{
 	
-	std::sort( infos.begin(), infos.end(), is_before );
+}
+
+void Level::FreeTargetPos( Vec2D target )
+{
 	
-	BOOST_FOREACH( EnemyInfo e, infos )
-	{
-		if( e.time >= level_time ) {
-			e.has_passed = true;
-			curr_info = &e;
-		}
-	}
-	curr_info->has_passed = false;
-	
-	infos.erase( std::remove_if( infos.begin(), infos.end(), has_time_passed ), infos.end() );
-	
-	World::Enemies enemies = world->GetEnemies();
-	
-	EnemyInfo::Positions::iterator pit = curr_info->positions.begin();
-	World::Enemies::iterator eit = enemies.begin();
-	
-	//set positions for every enemy
-	for( ; pit != curr_info->positions.end() && eit != enemies.end(); ++pit, ++eit )
-	{
-		(*eit)->SetPos( *pit );
-	}
-	
-	//if some enemies don't have a new positons, assign a random one
-	for( ; eit != enemies.end(); ++eit )
-	{
-		world->RandomizeTargetPos( *eit );
-	}
 }

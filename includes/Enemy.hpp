@@ -35,6 +35,10 @@ public:
 	}
 	
 	void SetTargetPos( Vec2D target );
+	Vec2D GetTargetPos() {
+		return target_pos;
+	}
+	bool HasReachedGoal();
 	
 	void Update( float dt );
 	void Render();

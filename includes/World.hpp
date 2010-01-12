@@ -13,6 +13,7 @@
 #include "Enemy.hpp"
 #include "Ground.hpp"
 #include "Notifier.hpp"
+#include "LevelLoader.hpp"
 
 class World {
 public:
@@ -31,17 +32,16 @@ public:
 		bullets.push_back( bullet );
 	}
 	
-	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
-	
-	Enemies GetEnemies() {
-		return enemies;
-	}
-	void SetEnemies( Enemies _enemies ) {
-		enemies = _enemies;
-	}
-	
 	void RandomizeTargetPos( boost::shared_ptr<Enemy> a );
 private:
+	void LoadLevel( boost::shared_ptr<Level> lvl );
+	
+	void CheckLevelCompletion();
+	void LevelCompleted();
+	void GameOver();
+	
+	boost::shared_ptr<Level> curr_lvl;
+	
 	boost::shared_ptr<hgeSprite> sky_spr;
 	boost::shared_ptr<Ground> ground;
 	
@@ -50,13 +50,16 @@ private:
 	typedef std::vector<boost::shared_ptr<Bullet> > Bullets;
 	Bullets bullets;
 	
+	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
 	Enemies enemies;
 	
 	boost::shared_ptr<hgeFont> arial10;
 	
 	boost::shared_ptr<Notifier> notifier;
 	
-	void Frag();
+	void Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bullet );
+	
+	boost::shared_ptr<LevelLoader> level_loader;
 	
 	void RenderDebug();
 	
