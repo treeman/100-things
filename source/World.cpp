@@ -12,9 +12,14 @@ bool bullet_gone( boost::shared_ptr<Bullet> b )
 		b->Info().pos.y < 0 || b->Info().pos.y > 600;
 }
 
-bool alien_gone( boost::shared_ptr<Enemy> a )
+bool enemy_gone( boost::shared_ptr<Enemy> a )
 {
 	return a->CanKill();
+}
+
+bool enemy_out_of_bounds( boost::shared_ptr<Enemy> a )
+{
+	return a->GetPos().x < 0 || a->GetPos().x > 800 || a->GetPos().y < 0 || a->GetPos().y > 600;
 }
 
 World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() )
@@ -30,7 +35,7 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	InitDators();
 	
 	for( int i = 0; i < 100; ++i ) {
-		boost::shared_ptr<Enemy> a( new Enemy( Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ))));
+		boost::shared_ptr<Enemy> a( new Enemy( Vec2D( 8 * i, 0 ) ) );
 		enemies.push_back( a );
 	}
 }
@@ -74,6 +79,19 @@ void World::Update( float dt )
 	
 	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 	{
+		if( enemy_out_of_bounds( a ) ) {
+			RandomizeTargetPos( a );
+		}
+		if( a->Bounds().Collision( ground->Bounds() ) ) {
+			a->SetPos( Vec2D( a->GetPos().x, ground->Bounds().y - a->Bounds().h ) );
+			Vec2D vel = a->GetVel();
+			if( vel.y > 0 ) {
+				vel.y = -0;
+				a->SetVel( vel );
+			}
+			RandomizeTargetPos( a );
+		}
+		
 		a->Update( dt );
 		
 		BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
@@ -87,7 +105,7 @@ void World::Update( float dt )
 	}
 	
 	bullets.erase( std::remove_if( bullets.begin(), bullets.end(), bullet_gone ), bullets.end() );
-	enemies.erase( std::remove_if( enemies.begin(), enemies.end(), alien_gone ), enemies.end() );
+	enemies.erase( std::remove_if( enemies.begin(), enemies.end(), enemy_gone ), enemies.end() );
 	
 	notifier->Update( dt );
 }
@@ -113,6 +131,19 @@ void World::Render()
 	notifier->Render();
 	
 	RenderDebug();
+}
+
+bool World::CanDudeJump()
+{
+	Shape::Rect dude_box = dude->Bounds();
+	//make it a little easier to jump :)
+	dude_box.h += 4;
+	return dude_box.Collision( ground->Bounds() );
+}
+
+void World::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
+{
+	a->SetTargetPos( Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ) ) );
 }
 
 void World::Frag()

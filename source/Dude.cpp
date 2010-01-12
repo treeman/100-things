@@ -38,7 +38,9 @@ void Dude::Shoot( Vec2D target )
 
 void Dude::Jump()
 {
-	vel += Vec2D( 0, -600 );
+	if( world->CanDudeJump() ) {
+		vel.y = -600;
+	}
 }
 
 void Dude::Duck()

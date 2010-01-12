@@ -20,15 +20,40 @@ public:
 		can_kill = true;
 	}
 	
+	void SetPos( Vec2D p ) {
+		pos = p;
+	}
+	Vec2D GetPos() {
+		return pos;
+	}
+	
+	void SetVel( Vec2D v ) {
+		vel = v;
+	}
+	Vec2D GetVel() {
+		return vel;
+	}
+	
+	void SetTargetPos( Vec2D target );
+	
 	void Update( float dt );
 	void Render();
 private:
+	Vec2D acc;
+	Vec2D vel;
 	Vec2D pos;
+	
+	Vec2D target_pos;
 	
 	TexObj tex;
 	boost::shared_ptr<hgeSprite> spr;
 	
 	bool can_kill;
+	
+	float max_acc;
+	float max_vel;
+	
+	HgeObj hge;
 };
 
 #endif

@@ -10,6 +10,27 @@ void hgeh::render_rect( HGE *hge, float x1, float y1, float x2, float y2, DWORD 
 	hge->Gfx_RenderLine( x1, y2, x1, y1, color );
 }
 
+void hgeh::render_solid_rect( HGE *hge, float x1, float y1, float x2, float y2, DWORD color )
+{
+	hgeQuad q;
+	q.blend = BLEND_DEFAULT;
+	q.tex = 0;
+	
+	hgeVertex v;
+	v.col = color;
+	v.tx = 0.0;
+	v.ty = 0.0;
+	
+	q.v[0] = q.v[1] = q.v[2] = q.v[3] = v;
+	
+	q.v[0].x = x1; q.v[0].y = y1;
+	q.v[1].x = x2; q.v[1].y = y1;
+	q.v[2].x = x2; q.v[2].y = y2;
+	q.v[3].x = x1; q.v[3].y = y2;
+	
+	hge->Gfx_RenderQuad( &q );
+}
+
 void hgeh::render_circle( HGE *hge, const Vec2D center, float radius, int segments, DWORD color )
 {
 	const float increment = math::PI2 / segments;
@@ -40,8 +61,6 @@ void hgeh::render_circle( HGE *hge, const Vec2D center, float radius, int segmen
 		hge->Gfx_RenderLine( p1.x, p1.y, p2.x, p2.y, color );
 	}
 }
-
-
 
 void hgeh::render_circle_slice( HGE *hge, const Vec2D center, float radius, int segments, float begin, float end, DWORD color )
 {

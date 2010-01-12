@@ -21,6 +21,8 @@ public:
 	void Update( float dt );
 	void Render();
 	
+	bool CanDudeJump();
+	
 	boost::shared_ptr<Dude> GetDude() {
 		return dude;
 	}
@@ -28,6 +30,17 @@ public:
 	void PushBullet( boost::shared_ptr<Bullet> bullet ) {
 		bullets.push_back( bullet );
 	}
+	
+	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
+	
+	Enemies GetEnemies() {
+		return enemies;
+	}
+	void SetEnemies( Enemies _enemies ) {
+		enemies = _enemies;
+	}
+	
+	void RandomizeTargetPos( boost::shared_ptr<Enemy> a );
 private:
 	boost::shared_ptr<hgeSprite> sky_spr;
 	boost::shared_ptr<Ground> ground;
@@ -37,7 +50,6 @@ private:
 	typedef std::vector<boost::shared_ptr<Bullet> > Bullets;
 	Bullets bullets;
 	
-	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
 	Enemies enemies;
 	
 	boost::shared_ptr<hgeFont> arial10;

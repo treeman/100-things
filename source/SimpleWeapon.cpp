@@ -6,6 +6,10 @@ SimpleBullet::SimpleBullet( Vec2D pos, Vec2D dir )
 	info.vel = dir;
 	info.vel.SetLength( 800 );
 }
+
+Shape::Rect SimpleBullet::Bounds() const {
+	return Shape::Rect( info.pos.x, info.pos.y, 2, 2 );
+}
 	
 void SimpleBullet::Update( float dt )
 {
@@ -13,12 +17,15 @@ void SimpleBullet::Update( float dt )
 }
 void SimpleBullet::Render()
 {
-	Vec2D p1 = info.pos;
-	Vec2D p2 = p1 + info.vel;
-	hge->Gfx_RenderLine( p1.x, p1.y, p1.x + 1, p1.y + 1, 0xff000000 );
+	const float x1 = info.pos.x;
+	const float y1 = info.pos.y;
+	const float x2 = info.pos.x + 2;
+	const float y2 = info.pos.y + 2;
+	
+	hgeh::render_solid_rect( hge, x1, y1, x2, y2, 0xff000000 );
 }
 
-SimpleWeapon::SimpleWeapon() : Weapon( 0.20 ) 
+SimpleWeapon::SimpleWeapon() : Weapon( 0.10 ) 
 { }
 
 boost::shared_ptr<Bullet> SimpleWeapon::GetBullet( Vec2D fire_pos, Vec2D dir ) {
