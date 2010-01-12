@@ -11,26 +11,18 @@ bool operator < ( const EnemyInfo &i1, const EnemyInfo &i2 ) {
 	return i1.time < i2.time;
 }
 
-Level::Level() : curr_info( 0 ), level_time( 0 )
+Level::Level() : curr_info( 0 ), level_time( 0 ), fnt( new hgeFont( "fnt/arial10.fnt" ) )
 {
-	
+	show_debug = true;
+	showDebug.reset( new Dator<bool>( show_debug ) );
+	Settings::Get().RegisterVariable( "level_debug", boost::weak_ptr<BaseDator>( showDebug ) );
 }
 
-void Level::UpdateTargetPos( Enemies enemies )
+void Level::SetTargetPos( Enemies enemies )
 {
-	EnemyInfo info = infos.at( curr_info );
-	
-	EnemyInfo::Positions::iterator pit = info.positions.begin();
-	Enemies::iterator eit = enemies.begin();
-	
-	for( ; pit != info.positions.end() && eit != enemies.end(); ++pit, ++eit )
+	for( Enemies::iterator it = enemies.begin(); it != enemies.end(); ++it )
 	{
-		(*eit)->SetTargetPos( *pit );
-	}
-	
-	for( ; eit != enemies.end(); ++eit )
-	{
-		RandomizeTargetPos( *eit );
+		(*it)->SetTargetPos( GetTargetPos() );
 	}
 }
 
@@ -41,16 +33,41 @@ void Level::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
 
 void Level::GoalReached( boost::shared_ptr<Enemy> e )
 {
-	
+	FreeTargetPos( e->GetTargetPos() );
+	e->SetTargetPos( GetTargetPos() );
 }
 void Level::EnemyDead( boost::shared_ptr<Enemy> e )
 {
-	
+	FreeTargetPos( e->GetTargetPos() );
 }
 
 void Level::Update( float dt )
 {
 	level_time += dt;
+}
+
+void Level::Render()
+{
+	if( show_debug ) {
+		fnt->SetColor( 0xffffffff );
+		
+		const float line_height = fnt->GetHeight() + 2;
+		EnemyInfo *i = &infos.at( curr_info );
+		int n = 0;
+		
+		fnt->Render( 300, 10, HGETEXT_LEFT, "used_pos" );
+		for( EnemyInfo::Positions::iterator it = i->used_pos.begin(); it != i->used_pos.end(); ++it, ++n )
+		{
+			fnt->printf( 300, 20 + n * line_height, HGETEXT_LEFT, "%.0f,%.0f", it->x, it->y );
+		}
+		n = 0;
+		
+		fnt->Render( 350, 10, HGETEXT_LEFT, "unused_pos" );
+		for( EnemyInfo::Positions::iterator it = i->unused_pos.begin(); it != i->unused_pos.end(); ++it, ++n )
+		{
+			fnt->printf( 350, 20 + n * line_height, HGETEXT_LEFT, "%.0f,%.0f", it->x, it->y );
+		}
+	}
 }
 
 Vec2D Level::RandomizeTargetPos()
@@ -60,10 +77,25 @@ Vec2D Level::RandomizeTargetPos()
 
 Vec2D Level::GetTargetPos()
 {
-	
+	EnemyInfo *i = &infos.at( curr_info );
+	if( i->unused_pos.empty() ) {
+		return RandomizeTargetPos();
+	}
+	else {
+		const Vec2D p = i->unused_pos.front();
+		i->unused_pos.pop_front();
+		i->used_pos.push_front( p );
+		return p;
+	}
 }
 
 void Level::FreeTargetPos( Vec2D target )
 {
-	
+	EnemyInfo *i = &infos.at( curr_info );
+	EnemyInfo::Positions::iterator it = std::find( i->used_pos.begin(), i->used_pos.end(), target );
+	if( it != i->used_pos.end() )
+	{
+		i->used_pos.erase( it );
+		i->unused_pos.push_front( target );
+	}
 }

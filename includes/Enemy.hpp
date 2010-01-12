@@ -6,6 +6,7 @@
 #include "System/Hge.hpp"
 #include "System/Vec2D.hpp"
 #include "System/Shape.hpp"
+#include "System/Settings.hpp"
 
 class Enemy {
 public:
@@ -58,6 +59,10 @@ private:
 	float max_vel;
 	
 	HgeObj hge;
+	
+	boost::shared_ptr<hgeFont> fnt;
+	bool show_debug;
+	boost::shared_ptr<Dator<bool> > showDebug;
 };
 
 #endif

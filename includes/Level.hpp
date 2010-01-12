@@ -13,8 +13,9 @@ struct EnemyInfo {
 	bool has_passed;
 	float time;
 	
-	typedef std::vector<Vec2D> Positions;
-	Positions positions;
+	typedef std::list<Vec2D> Positions;
+	Positions used_pos;
+	Positions unused_pos;
 };
 
 class Level {
@@ -23,13 +24,14 @@ public:
 	
 	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
 	
-	void UpdateTargetPos( Enemies enemies );
+	void SetTargetPos( Enemies enemies );
 	
 	void RandomizeTargetPos( boost::shared_ptr<Enemy> e );
 	void GoalReached( boost::shared_ptr<Enemy> e );
 	void EnemyDead( boost::shared_ptr<Enemy> e );
 	
 	void Update( float dt );
+	void Render();
 private:
 	void Copy( const Level &lvl );
 	
@@ -48,6 +50,10 @@ private:
 	friend class LevelLoader;
 	
 	HgeObj hge;
+	
+	boost::shared_ptr<hgeFont> fnt;
+	bool show_debug;
+	boost::shared_ptr<Dator<bool> > showDebug;
 };
 
 #endif

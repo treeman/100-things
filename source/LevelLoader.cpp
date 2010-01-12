@@ -9,7 +9,7 @@ LevelLoader::LevelLoader() : curr( 0 )
 	i.time = 0;
 	for( int n = 0; n < 10; ++n )
 	{
-		i.positions.push_back( Vec2D( 10, 10 + n * 40 ) );
+		i.unused_pos.push_back( Vec2D( 10, 10 + n * 40 ) );
 	}
 	lvl->infos.push_back( i );
 	

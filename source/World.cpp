@@ -82,9 +82,9 @@ void World::Update( float dt )
 	
 	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 	{
-		if( enemy_out_of_bounds( a ) ) {
-			RandomizeTargetPos( a );
-		}
+//		if( enemy_out_of_bounds( a ) ) {
+//			RandomizeTargetPos( a );
+//		}
 		if( a->Bounds().Collision( ground->Bounds() ) ) {
 			a->SetPos( Vec2D( a->GetPos().x, ground->Bounds().y - a->Bounds().h ) );
 			Vec2D vel = a->GetVel();
@@ -92,7 +92,6 @@ void World::Update( float dt )
 				vel.y = -0;
 				a->SetVel( vel );
 			}
-			RandomizeTargetPos( a );
 		}
 		if( a->HasReachedGoal() ) {
 			curr_lvl->GoalReached( a );
@@ -109,7 +108,6 @@ void World::Update( float dt )
 	}
 	
 	if( curr_lvl ) {
-//		curr_lvl->UpdateTargetPos( enemies );
 		curr_lvl->Update( dt );
 	}
 	
@@ -158,7 +156,7 @@ void World::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
 void World::LoadLevel( boost::shared_ptr<Level> lvl )
 {
 	curr_lvl = lvl;
-	curr_lvl->UpdateTargetPos( enemies );
+	curr_lvl->SetTargetPos( enemies );
 }
 	
 void World::CheckLevelCompletion()
@@ -195,6 +193,10 @@ void World::InitDators()
 
 void World::RenderDebug()
 {
+	if( curr_lvl ) {
+		curr_lvl->Render();
+	}
+	
 	if( show_bullets ) {
 		arial10->SetColor( 0xffffffff );
 		arial10->printf( 200, 6, HGETEXT_LEFT, "num_bullets: %i", bullets.size() );
