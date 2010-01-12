@@ -8,7 +8,14 @@
 class LevelLoader;
 
 struct EnemyInfo {
-	EnemyInfo() : has_passed( false ) { }
+	EnemyInfo() { Reset(); }
+	
+	void Reset() {
+		has_passed = false;
+		time = 0;
+		used_pos.clear();
+		unused_pos.clear();
+	}
 
 	bool has_passed;
 	float time;

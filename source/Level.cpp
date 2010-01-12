@@ -44,6 +44,11 @@ void Level::EnemyDead( boost::shared_ptr<Enemy> e )
 void Level::Update( float dt )
 {
 	level_time += dt;
+	if( infos.size() > curr_info + 1 ) {
+		if( infos.at( curr_info + 1 ).time < level_time ) {
+			++curr_info;
+		}
+	}
 }
 
 void Level::Render()
@@ -55,18 +60,20 @@ void Level::Render()
 		EnemyInfo *i = &infos.at( curr_info );
 		int n = 0;
 		
-		fnt->Render( 300, 10, HGETEXT_LEFT, "used_pos" );
+		fnt->Render( 300, 5, HGETEXT_LEFT, "used_pos" );
 		for( EnemyInfo::Positions::iterator it = i->used_pos.begin(); it != i->used_pos.end(); ++it, ++n )
 		{
 			fnt->printf( 300, 20 + n * line_height, HGETEXT_LEFT, "%.0f,%.0f", it->x, it->y );
 		}
 		n = 0;
 		
-		fnt->Render( 350, 10, HGETEXT_LEFT, "unused_pos" );
+		fnt->Render( 350, 5, HGETEXT_LEFT, "unused_pos" );
 		for( EnemyInfo::Positions::iterator it = i->unused_pos.begin(); it != i->unused_pos.end(); ++it, ++n )
 		{
 			fnt->printf( 350, 20 + n * line_height, HGETEXT_LEFT, "%.0f,%.0f", it->x, it->y );
 		}
+		
+		fnt->printf( 430, 5, HGETEXT_LEFT, "time: %f", level_time );
 	}
 }
 
