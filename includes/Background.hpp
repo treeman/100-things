@@ -20,12 +20,14 @@ struct Cloud {
 	TexObj tex;
 	boost::shared_ptr<hgeSprite> spr;
 	float x, y;
+	float min_x, max_x;
 };
 
 class ABackground : public Background {
 public:
 	ABackground();
 	
+	void SetDudePos( Vec2D pos );
 	void SetRageLevel( float rage_perc );
 	void ReportEnemyKilled();
 	
@@ -34,19 +36,22 @@ public:
 private:
 	boost::shared_ptr<hgeSprite> sky_spr;
 	
-	typedef std::vector<Cloud> Clouds;
-	Clouds clouds;
+	Cloud time_cloud;
+	Cloud kill_cloud;
+	Cloud rage_cloud;
 	
 	TexObj sign_tex;
 	boost::shared_ptr<hgeSprite> sign_spr;
 	
 	boost::shared_ptr<hgeFont> asia30;
 	boost::shared_ptr<hgeFont> asia23;
+	boost::shared_ptr<hgeFont> arial10;
 	
 	Timer timer;
 	
 	float rage;
 	int enemies_killed;
+	Vec2D dude_pos;
 	
 	HgeObj hge;
 };

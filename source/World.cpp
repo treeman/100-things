@@ -108,6 +108,11 @@ void World::Update( float dt )
 		}
 	}
 	
+	BOOST_FOREACH( WorldListener *listener, listeners )
+	{
+		listener->SetDudePos( dude->GetPos() );
+	}
+	
 	if( curr_lvl ) {
 		curr_lvl->Update( dt );
 	}

@@ -7,7 +7,8 @@
 const float sky_height = 600;
 
 ABackground::ABackground() : asia30( new hgeFont( "fnt/asiaextended30.fnt" ) ), 
-	asia23( new hgeFont( "fnt/asiaextended23.fnt" ) ), rage( 0 ), enemies_killed( 0 )
+	asia23( new hgeFont( "fnt/asiaextended23.fnt" ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ),
+	rage( 0 ), enemies_killed( 0 )
 {
 	const int screen_w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	
@@ -18,29 +19,28 @@ ABackground::ABackground() : asia30( new hgeFont( "fnt/asiaextended30.fnt" ) ),
 	sky_spr->SetColor( 0xFF3e0e50, 2 );
 	sky_spr->SetColor( 0xFF3e0e50, 3 );
 	
-	Cloud c;
+	time_cloud.tex.Load( "gfx/time_cloud.png" );
+	time_cloud.spr.reset( new hgeSprite( time_cloud.tex, 0, 0, 177, 100 ) );
+	time_cloud.x = 10; time_cloud.y = 40;
+	time_cloud.min_x = 70; time_cloud.max_x = 130;
 	
-	c.tex.Load( "gfx/cloud1.png" );
-	c.spr.reset( new hgeSprite( c.tex, 0, 0, 177, 100 ) );
-	c.x = 10; c.y = 40;
-	clouds.push_back( c );
+	kill_cloud.tex.Load( "gfx/kill_cloud.png" );
+	kill_cloud.spr.reset( new hgeSprite( kill_cloud.tex, 0, 0, 263, 100 ) );
+	kill_cloud.x = 150; kill_cloud.y = 130;
+	kill_cloud.min_x = 130; kill_cloud.max_x = 170;
 	
-	c.tex.Load( "gfx/cloud2.png" );
-	c.spr.reset( new hgeSprite( c.tex, 0, 0, 216, 100 ) );
-	c.x = 400; c.y = 80;
-	clouds.push_back( c );
-	
-	c.tex.Load( "gfx/cloud3.png" );
-	c.spr.reset( new hgeSprite( c.tex, 0, 0, 263, 100 ) );
-	c.x = 150; c.y = 130;
-	clouds.push_back( c );
-	
-	sign_tex.Load( "gfx/sign.png" );
-	sign_spr.reset( new hgeSprite( sign_tex, 0, 0, 120, 130 ) );
+	rage_cloud.tex.Load( "gfx/rage_cloud.png" );
+	rage_cloud.spr.reset( new hgeSprite( rage_cloud.tex, 0, 0, 216, 100 ) );
+	rage_cloud.x = 400; rage_cloud.y = 80;
+	rage_cloud.min_x = 330; rage_cloud.max_x = 470;
 	
 	timer.Start();
 }
 
+void ABackground::SetDudePos( Vec2D pos )
+{
+	dude_pos = pos;
+}
 void ABackground::SetRageLevel( float rage_perc )
 {
 	rage = rage_perc;
@@ -52,36 +52,32 @@ void ABackground::ReportEnemyKilled()
 	
 void ABackground::Update( float dt )
 {
+	const float dude_min = 0;
+	const float dude_max = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	
+	const float dude_perc = dude_pos.x / ( dude_max - dude_min );
+	
+	rage_cloud.x = rage_cloud.min_x + dude_perc * ( rage_cloud.max_x - rage_cloud.min_x );
+	kill_cloud.x = kill_cloud.min_x + dude_perc * ( kill_cloud.max_x - kill_cloud.min_x );
+	time_cloud.x = time_cloud.min_x + dude_perc * ( time_cloud.max_x - time_cloud.min_x );
 }
+
 void ABackground::Render()
 {
 	sky_spr->Render(0,0);
+
+	time_cloud.spr->SetColor( 0x99610303 );
+	time_cloud.spr->Render( time_cloud.x, time_cloud.y );
 	
-	BOOST_FOREACH( Cloud c, clouds )
-	{
-		c.spr->SetColor( 0x99610303 );
-		c.spr->Render( c.x, c.y );
-	}
+	kill_cloud.spr->SetColor( 0x99610303 );
+	kill_cloud.spr->Render( kill_cloud.x, kill_cloud.y );
 	
-//	sign_spr->SetColor( 0xff5d0623 );
-//	sign_spr->Render( 217, 440 );
-	
-//	asia30->SetColor( 0xff420011 );
-//	asia30->SetRotation( -(math::PI / 5) );
-//	asia30->Render( 238, 501, HGETEXT_LEFT, "R" );
-//	asia30->Render( 252, 490, HGETEXT_LEFT, "a" );
-//	asia30->Render( 263, 480, HGETEXT_LEFT, "g" );
-//	asia30->Render( 273, 477, HGETEXT_LEFT, "e" );
-//	
-//	asia23->SetColor( 0xff420011 );
-//	asia23->SetRotation( -(math::PI / 6) );
-//	asia23->printf( 283, 458, HGETEXT_LEFT, "%i", rage );
-//	asia30->SetRotation( 0 );
+	rage_cloud.spr->SetColor( 0x99610303 );
+	rage_cloud.spr->Render( rage_cloud.x, rage_cloud.y );
 	
 	asia30->SetColor( 0xff953c53 );
 	
-	asia30->printf( clouds[2].x + 100, clouds[2].y + 60, HGETEXT_LEFT, "%i", enemies_killed );
+	asia30->printf( kill_cloud.x + 100, kill_cloud.y + 60, HGETEXT_LEFT, "%i", enemies_killed );
 	
 	const int minutes = (int)timer.GetTime() / 60;
 	const int seconds = (int)timer.GetTime() - minutes * 60;
@@ -91,8 +87,8 @@ void ABackground::Render()
 	ss << minutes << ( seconds < 10 ? ":0" : ":" ) << seconds;
 	
 	asia30->SetColor( 0xffb64d54 );
-	asia30->Render( clouds[0].x + 50, clouds[0].y + 5, HGETEXT_LEFT, ss.str().c_str() );
+	asia30->Render( time_cloud.x + 50, time_cloud.y + 5, HGETEXT_LEFT, ss.str().c_str() );
 	
 	asia30->SetColor( 0xffad4853 );
-	asia30->printf( clouds[1].x + 50, clouds[1].y + 5, HGETEXT_LEFT, "%i", rage );
+	asia30->printf( rage_cloud.x + 50, rage_cloud.y + 4, HGETEXT_LEFT, "%i", rage );
 }
