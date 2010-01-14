@@ -1,4 +1,5 @@
 #include <boost/foreach.hpp>
+#include <sstream>
 
 #include "includes/System/Settings.hpp"
 #include "includes/Background.hpp"
@@ -25,7 +26,7 @@ ABackground::ABackground() : asia30( new hgeFont( "fnt/asiaextended30.fnt" ) ),
 	clouds.push_back( c );
 	
 	c.tex.Load( "gfx/cloud2.png" );
-	c.spr.reset( new hgeSprite( c.tex, 0, 0, 216, 44 ) );
+	c.spr.reset( new hgeSprite( c.tex, 0, 0, 216, 100 ) );
 	c.x = 400; c.y = 80;
 	clouds.push_back( c );
 	
@@ -63,24 +64,35 @@ void ABackground::Render()
 		c.spr->Render( c.x, c.y );
 	}
 	
-	sign_spr->SetColor( 0xff5d0623 );
-	sign_spr->Render( 217, 440 );
+//	sign_spr->SetColor( 0xff5d0623 );
+//	sign_spr->Render( 217, 440 );
 	
-	asia30->SetColor( 0xff420011 );
-	asia30->SetRotation( -(math::PI / 5) );
-	asia30->Render( 238, 501, HGETEXT_LEFT, "R" );
-	asia30->Render( 252, 490, HGETEXT_LEFT, "a" );
-	asia30->Render( 263, 480, HGETEXT_LEFT, "g" );
-	asia30->Render( 273, 477, HGETEXT_LEFT, "e" );
-	
-	asia23->SetColor( 0xff420011 );
-	asia23->SetRotation( -(math::PI / 6) );
-	asia23->printf( 283, 458, HGETEXT_LEFT, "%i", rage );
+//	asia30->SetColor( 0xff420011 );
+//	asia30->SetRotation( -(math::PI / 5) );
+//	asia30->Render( 238, 501, HGETEXT_LEFT, "R" );
+//	asia30->Render( 252, 490, HGETEXT_LEFT, "a" );
+//	asia30->Render( 263, 480, HGETEXT_LEFT, "g" );
+//	asia30->Render( 273, 477, HGETEXT_LEFT, "e" );
+//	
+//	asia23->SetColor( 0xff420011 );
+//	asia23->SetRotation( -(math::PI / 6) );
+//	asia23->printf( 283, 458, HGETEXT_LEFT, "%i", rage );
+//	asia30->SetRotation( 0 );
 	
 	asia30->SetColor( 0xff953c53 );
-	asia30->SetRotation( 0 );
+	
 	asia30->printf( clouds[2].x + 100, clouds[2].y + 60, HGETEXT_LEFT, "%i", enemies_killed );
 	
+	const int minutes = (int)timer.GetTime() / 60;
+	const int seconds = (int)timer.GetTime() - minutes * 60;
+	
+	std::stringstream ss;
+	
+	ss << minutes << ( seconds < 10 ? ":0" : ":" ) << seconds;
+	
 	asia30->SetColor( 0xffb64d54 );
-	asia30->printf( clouds[0].x + 50, clouds[0].y + 5, HGETEXT_LEFT, "%.0f", timer.GetTime() );
+	asia30->Render( clouds[0].x + 50, clouds[0].y + 5, HGETEXT_LEFT, ss.str().c_str() );
+	
+	asia30->SetColor( 0xffad4853 );
+	asia30->printf( clouds[1].x + 50, clouds[1].y + 5, HGETEXT_LEFT, "%i", rage );
 }
