@@ -33,14 +33,19 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	
 	InitDators();
 	
-	for( int i = 0; i < 50; ++i ) {
+	for( int i = 0; i < 33; ++i ) {
 		boost::shared_ptr<Enemy> a( new PippiAfro( Vec2D( 8 * i, 0 ) ) );
 		enemies.push_back( a );
 	}
-	for( int i = 0; i < 50; ++i ) {
+	for( int i = 33; i < 66; ++i ) {
 		boost::shared_ptr<Enemy> a( new MutantAfro( Vec2D( 8 * i, 0 ) ) );
 		enemies.push_back( a );
 	}
+	for( int i = 66; i < 99; ++i ) {
+		boost::shared_ptr<Enemy> a( new ShooterAfro( Vec2D( 8 * i, 0 ), this ) );
+		enemies.push_back( a );
+	}
+	
 	boost::shared_ptr<Enemy> a( new AfroWorm( Vec2D( 0, 0 ), h - 40 ) );
 	enemies.push_back( a );
 	
@@ -49,6 +54,17 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	background.reset( new ABackground() );
 	
 	AddListener( background.get() );
+}
+
+void World::PushBullet( boost::shared_ptr<Bullet> bullet )
+{
+	all_bullets.push_back( bullet );
+	if( bullet->Info().target == TARGET_ENEMY ) {
+		dude_bullets.push_back( bullet );
+	}
+	else {
+		enemy_bullets.push_back( bullet );
+	}
 }
 
 void World::Update( float dt )
@@ -83,16 +99,16 @@ void World::Update( float dt )
 		}
 	}
 
-	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+	BOOST_FOREACH( boost::shared_ptr<Bullet> b, all_bullets )
 	{
 		b->Update( dt );
 	}
 	
 	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 	{
-//		if( enemy_out_of_bounds( a ) ) {
-//			RandomizeTargetPos( a );
-//		}
+		if( enemy_out_of_bounds( a ) ) {
+			RandomizeTargetPos( a );
+		}
 		if( a->Bounds().Collision( ground->Bounds() ) ) {
 			a->SetPos( Vec2D( a->GetPos().x, ground->Bounds().y - a->Bounds().h ) );
 			Vec2D vel = a->GetVel();
@@ -107,7 +123,7 @@ void World::Update( float dt )
 		
 		a->Update( dt );
 		
-		BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+		BOOST_FOREACH( boost::shared_ptr<Bullet> b, dude_bullets )
 		{
 			if( a->Bounds().Overlap( b->Bounds() ) ) {
 				Frag( a, b );
@@ -124,7 +140,7 @@ void World::Update( float dt )
 		curr_lvl->Update( dt );
 	}
 	
-	bullets.erase( std::remove_if( bullets.begin(), bullets.end(), bullet_gone ), bullets.end() );
+	all_bullets.erase( std::remove_if( all_bullets.begin(), all_bullets.end(), bullet_gone ), all_bullets.end() );
 	enemies.erase( std::remove_if( enemies.begin(), enemies.end(), enemy_gone ), enemies.end() );
 	
 	notifier->Update( dt );
@@ -136,7 +152,7 @@ void World::Render()
 	
 	dude->Render();
 	
-	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+	BOOST_FOREACH( boost::shared_ptr<Bullet> b, all_bullets )
 	{
 		b->Render();
 	}
@@ -222,11 +238,11 @@ void World::RenderDebug()
 	
 	if( show_bullets ) {
 		arial10->SetColor( 0xffffffff );
-		arial10->printf( 200, 6, HGETEXT_LEFT, "num_bullets: %i", bullets.size() );
+		arial10->printf( 200, 6, HGETEXT_LEFT, "num_bullets: %i", all_bullets.size() );
 		int n = 0;
 		float line_height = arial10->GetHeight() + 2;
 		
-		for( Bullets::reverse_iterator rit = bullets.rbegin(); rit != bullets.rend() && n < 10; ++rit, ++n ) 
+		for( Bullets::reverse_iterator rit = all_bullets.rbegin(); rit != all_bullets.rend() && n < 10; ++rit, ++n ) 
 		{
 			arial10->printf( 200, 20 + line_height * n, HGETEXT_LEFT, "vel: %.1f", 
 			(*rit)->Info().vel.Length() );

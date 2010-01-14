@@ -30,9 +30,7 @@ public:
 		return dude;
 	}
 	
-	void PushBullet( boost::shared_ptr<Bullet> bullet ) {
-		bullets.push_back( bullet );
-	}
+	void PushBullet( boost::shared_ptr<Bullet> bullet );
 	
 	void RandomizeTargetPos( boost::shared_ptr<Enemy> a );
 	
@@ -51,7 +49,10 @@ private:
 	boost::shared_ptr<Dude> dude;
 	
 	typedef std::vector<boost::shared_ptr<Bullet> > Bullets;
-	Bullets bullets;
+	
+	Bullets dude_bullets;
+	Bullets enemy_bullets;
+	Bullets all_bullets;
 	
 	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
 	Enemies enemies;

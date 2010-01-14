@@ -6,18 +6,7 @@
 #include "System/Timer.hpp"
 #include "System/Vec2D.hpp"
 #include "Weapon.hpp"
-
-class SimpleBullet : public Bullet {
-public:
-	SimpleBullet( Vec2D pos, Vec2D dir );
-	
-	Shape::Rect Bounds() const;
-	
-	void Update( float dt );
-	void Render();
-private:
-	HgeObj hge;
-};
+#include "SimpleBullet.hpp"
 
 class SimpleWeapon : public Weapon {
 public:
@@ -25,5 +14,12 @@ public:
 protected:
 	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
 };
+
+//class AfroShooterWeapon : public Weapon {
+//public:
+//	AfroShooterWeapon();
+//protected:
+//	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
+//};
 
 #endif

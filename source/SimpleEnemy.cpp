@@ -1,4 +1,6 @@
 #include "includes/SimpleEnemy.hpp"
+#include "includes/SimpleBullet.hpp"
+#include "includes/World.hpp"
 
 PippiAfro::PippiAfro( Vec2D pos ) : Enemy( pos ), max_acc( 2000 ), max_vel( 200 ), w( 26 ), h( 20 )
 {
@@ -148,4 +150,67 @@ void AfroWorm::FaceLeft()
 void AfroWorm::FaceRight()
 {
 	spr->SetFlip( true, false );
+}
+
+ShooterAfro::ShooterAfro( Vec2D pos, World *const _world ) : Enemy( pos ), max_acc( 2000 ), max_vel( 200 ), w( 42 ), h( 36 )
+	,world( _world )
+{
+	tex.Load( "gfx/shooterafro.png" );
+	spr.reset( new hgeSprite( tex, 0, 0, w, h ) );
+	
+	delay_bag.Add( 1 ).Add( 2 ).Add( 2.5 ).Add( 4 ).Add( 3.5 ).Add( 5 ).
+	Add( 10 ).Add( 1 ).Add( 4.2 );
+	
+	ResetShootDelay();
+}
+
+Shape::Rect ShooterAfro::Bounds()
+{
+	return Shape::Rect( pos.x, pos.y, w, h );
+}
+
+bool ShooterAfro::HasReachedGoal()
+{
+	const Vec2D dist = pos - target_pos;
+	return dist.Length() < 10;
+}
+	
+void ShooterAfro::Update( float dt )
+{
+	if( shoot_time.GetTime() > delay ) {
+		Shoot();
+		ResetShootDelay();
+	}
+	
+	const Vec2D desired = target_pos - pos;
+	acc = desired - vel;
+	
+	acc.TruncateLength( max_acc );
+	
+	const Vec2D new_vel = vel + acc * dt;
+	vel = new_vel;
+	vel.TruncateLength( max_vel );
+	
+	const Vec2D new_pos = pos + new_vel * dt;
+
+	pos = new_pos;
+}
+void ShooterAfro::Render()
+{
+	spr->Render( (int)pos.x, (int)pos.y );
+	
+	RenderDebug();
+}
+
+void ShooterAfro::Shoot()
+{
+	const float target_x = pos.x;// + hge->Random_Float( -20, 20 ); 
+	boost::shared_ptr<Bullet> bullet( new AfroBullet( pos, Vec2D( 400, 600 ) ) );
+	world->PushBullet( bullet );
+}
+
+void ShooterAfro::ResetShootDelay()
+{
+	delay = delay_bag.Get();
+	shoot_time.Restart();
 }
