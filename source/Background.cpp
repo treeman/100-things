@@ -65,14 +65,16 @@ void ABackground::Update( float dt )
 void ABackground::Render()
 {
 	sky_spr->Render(0,0);
+	
+	const DWORD cloud_color = 0x77610303;
 
-	time_cloud.spr->SetColor( 0x99610303 );
+	time_cloud.spr->SetColor( cloud_color );
 	time_cloud.spr->Render( time_cloud.x, time_cloud.y );
 	
-	kill_cloud.spr->SetColor( 0x99610303 );
+	kill_cloud.spr->SetColor( cloud_color );
 	kill_cloud.spr->Render( kill_cloud.x, kill_cloud.y );
 	
-	rage_cloud.spr->SetColor( 0x99610303 );
+	rage_cloud.spr->SetColor( cloud_color );
 	rage_cloud.spr->Render( rage_cloud.x, rage_cloud.y );
 	
 	asia30->SetColor( 0xff953c53 );

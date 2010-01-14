@@ -4,6 +4,7 @@
 #include "includes/System/Hge.hpp"
 
 #include "includes/World.hpp"
+#include "includes/SimpleEnemy.hpp"
 
 bool bullet_gone( boost::shared_ptr<Bullet> b )
 {
@@ -28,14 +29,20 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	const int h = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_height" ) );
 	
-	ground.reset( new Ground( 0, h - 40, w, 40 ) );
+	ground.reset( new Ground( -w, h - 40, w * 2, 40 ) );
 	
 	InitDators();
 	
-	for( int i = 0; i < 100; ++i ) {
-		boost::shared_ptr<Enemy> a( new Enemy( Vec2D( 8 * i, 0 ) ) );
+	for( int i = 0; i < 50; ++i ) {
+		boost::shared_ptr<Enemy> a( new PippiAfro( Vec2D( 8 * i, 0 ) ) );
 		enemies.push_back( a );
 	}
+	for( int i = 0; i < 50; ++i ) {
+		boost::shared_ptr<Enemy> a( new MutantAfro( Vec2D( 8 * i, 0 ) ) );
+		enemies.push_back( a );
+	}
+	boost::shared_ptr<Enemy> a( new AfroWorm( Vec2D( 0, 0 ), h - 40 ) );
+	enemies.push_back( a );
 	
 	LoadLevel( level_loader->GetNextLevel() );
 	

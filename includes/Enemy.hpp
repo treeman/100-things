@@ -1,5 +1,5 @@
-#ifndef ALIEN_HPP_INCLUDED
-#define ALIEN_HPP_INCLUDED
+#ifndef ENEMY_HPP_INCLUDED
+#define ENEMY_HPP_INCLUDED
 
 #include <boost/shared_ptr.hpp>
 
@@ -11,8 +11,9 @@
 class Enemy {
 public:
 	Enemy( Vec2D pos );
+	virtual ~Enemy() { }
 	
-	Shape::Rect Bounds();
+	virtual Shape::Rect Bounds() = 0;
 	
 	bool CanKill() const {
 		return can_kill;
@@ -21,44 +22,43 @@ public:
 		can_kill = true;
 	}
 	
-	void SetPos( Vec2D p ) {
+	virtual void SetPos( Vec2D p ) {
 		pos = p;
 	}
-	Vec2D GetPos() {
+	Vec2D GetPos() const {
 		return pos;
 	}
 	
-	void SetVel( Vec2D v ) {
+	virtual void SetVel( Vec2D v ) {
 		vel = v;
 	}
-	Vec2D GetVel() {
+	Vec2D GetVel() const {
 		return vel;
 	}
 	
-	void SetTargetPos( Vec2D target );
-	Vec2D GetTargetPos() {
+	virtual void SetTargetPos( Vec2D target ) {
+		target_pos = target;
+	}
+	Vec2D GetTargetPos() const {
 		return target_pos;
 	}
-	bool HasReachedGoal();
 	
-	void Update( float dt );
-	void Render();
-private:
+	virtual bool HasReachedGoal() = 0;
+	
+	virtual void Update( float dt ) = 0;
+	virtual void Render() = 0;
+protected:
 	Vec2D acc;
 	Vec2D vel;
 	Vec2D pos;
 	
 	Vec2D target_pos;
 	
-	TexObj tex;
-	boost::shared_ptr<hgeSprite> spr;
-	
 	bool can_kill;
 	
-	float max_acc;
-	float max_vel;
-	
 	HgeObj hge;
+	
+	void RenderDebug();
 	
 	boost::shared_ptr<hgeFont> fnt;
 	bool show_debug;

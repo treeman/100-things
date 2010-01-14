@@ -277,7 +277,7 @@ void Console::AddHistory( std::string str )
 }
 void Console::PushCmd( std::string str )
 {
-	cmd_history.insert( cmd_history.begin(), str );
+	AddHistory( str );
 }
 void Console::PushHistory( std::string str )
 {
