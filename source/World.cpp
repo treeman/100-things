@@ -153,6 +153,11 @@ void World::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
 	a->SetTargetPos( Vec2D( hge->Random_Int( 0, 800 ), hge->Random_Int( 0, 500 ) ) );
 }
 
+void World::AddListener( WorldListener *const listener )
+{
+	listeners.push_back( listener );
+}
+
 void World::LoadLevel( boost::shared_ptr<Level> lvl )
 {
 	curr_lvl = lvl;
@@ -178,6 +183,11 @@ void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bull
 	bullet->Kill();
 	curr_lvl->EnemyDead( enemy );
 	notifier->Add( "Eat my shorts" );
+	
+	BOOST_FOREACH( WorldListener *listener, listeners )
+	{
+		listener->ReportEnemyKilled();
+	}
 }
 
 void World::InitDators()

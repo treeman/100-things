@@ -2,10 +2,12 @@
 
 GameWorld::GameWorld( StateHandler * const _state_handler ) : 
 	GameState(_state_handler), state_handler(_state_handler), input_chain( new InputChain() ), 
-	world( new World() ), controller( new Controller( world->GetDude() ) ), mouse( new Mouse() )
+	world( new World() ), controller( new Controller( world->GetDude() ) ), gui( new Gui() )
 {
 	input_chain->AddHandler( controller.get() );
-	input_chain->AddHandler( mouse.get() );
+	input_chain->AddHandler( gui.get() );
+	
+	world->AddListener( gui->GetListener() );
 }
 GameWorld::~GameWorld()
 {
@@ -20,17 +22,17 @@ bool GameWorld::HandleEvent( hgeInputEvent &event )
 		}
 	}
 	
-	input_chain->HandleEvent( event );
-	return true;
+	return input_chain->HandleEvent( event );
 }
 	
 void GameWorld::Update( float dt )
 {
 	controller->Update( dt );
 	world->Update( dt );
+	gui->Update( dt );
 }
 void GameWorld::Render()
 {
 	world->Render();
-	mouse->Render();
+	gui->Render();
 }

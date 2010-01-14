@@ -6,7 +6,7 @@
 
 #include "World.hpp"
 #include "Controller.hpp"
-#include "Mouse.hpp"
+#include "Gui.hpp"
 
 class GameWorld : public GameState {
 public:
@@ -29,7 +29,7 @@ private:
 	boost::shared_ptr<World> world;
 	boost::shared_ptr<Controller> controller;
 	
-	boost::shared_ptr<Mouse> mouse;
+	boost::shared_ptr<Gui> gui;
 	
 	HgeObj hge;
 };

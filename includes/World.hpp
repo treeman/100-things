@@ -14,6 +14,7 @@
 #include "Ground.hpp"
 #include "Notifier.hpp"
 #include "LevelLoader.hpp"
+#include "WorldListener.hpp"
 
 class World {
 public:
@@ -33,6 +34,8 @@ public:
 	}
 	
 	void RandomizeTargetPos( boost::shared_ptr<Enemy> a );
+	
+	void AddListener( WorldListener *const listener );
 private:
 	void LoadLevel( boost::shared_ptr<Level> lvl );
 	
@@ -60,6 +63,9 @@ private:
 	void Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bullet );
 	
 	boost::shared_ptr<LevelLoader> level_loader;
+	
+	typedef std::vector<WorldListener*> Listeners;
+	Listeners listeners;
 	
 	void RenderDebug();
 	

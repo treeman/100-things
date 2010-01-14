@@ -12,9 +12,10 @@ LevelLoader::LevelLoader() : curr( 0 )
 		i.unused_pos.push_back( Vec2D( 10, 10 + n * 40 ) );
 	}
 	lvl->infos.push_back( i );
+	
 	i.Reset();
 	i.time = 5;
-	lvl->infos.push_back( i );
+	lvl->infos.push_back( i );	
 	
 	levels.push_back( lvl );
 }
