@@ -28,9 +28,6 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	const int h = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_height" ) );
 	
-	sky_spr.reset( new hgeSprite( 0, 0, 0, w, h ) );
-	sky_spr->SetColor( 0xff7d1eb4 );
-	
 	ground.reset( new Ground( 0, h - 40, w, 40 ) );
 	
 	InitDators();
@@ -41,6 +38,10 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	}
 	
 	LoadLevel( level_loader->GetNextLevel() );
+	
+	background.reset( new ABackground() );
+	
+	AddListener( background.get() );
 }
 
 void World::Update( float dt )
@@ -115,11 +116,11 @@ void World::Update( float dt )
 	enemies.erase( std::remove_if( enemies.begin(), enemies.end(), enemy_gone ), enemies.end() );
 	
 	notifier->Update( dt );
+	background->Update( dt );
 }
 void World::Render()
 {
-	//big owl hoho!
-	sky_spr->Render( 0, 0 );
+	background->Render();
 	
 	dude->Render();
 	

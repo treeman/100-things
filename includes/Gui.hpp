@@ -5,9 +5,9 @@
 
 #include "System/InputHandler.hpp"
 #include "Mouse.hpp"
-#include "Infobar.hpp"
+#include "WorldListener.hpp"
 
-class Gui : public InputHandler {
+class Gui : public InputHandler, public WorldListener {
 public:
 	Gui();
 	
@@ -21,7 +21,6 @@ private:
 	boost::shared_ptr<InputChain> input_chain;
 	
 	boost::shared_ptr<Mouse> mouse;
-	boost::shared_ptr<Infobar> infobar;
 };
 
 #endif

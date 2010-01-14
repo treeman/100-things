@@ -15,6 +15,7 @@
 #include "Notifier.hpp"
 #include "LevelLoader.hpp"
 #include "WorldListener.hpp"
+#include "Background.hpp"
 
 class World {
 public:
@@ -45,7 +46,6 @@ private:
 	
 	boost::shared_ptr<Level> curr_lvl;
 	
-	boost::shared_ptr<hgeSprite> sky_spr;
 	boost::shared_ptr<Ground> ground;
 	
 	boost::shared_ptr<Dude> dude;
@@ -66,6 +66,8 @@ private:
 	
 	typedef std::vector<WorldListener*> Listeners;
 	Listeners listeners;
+	
+	boost::shared_ptr<Background> background;
 	
 	void RenderDebug();
 	

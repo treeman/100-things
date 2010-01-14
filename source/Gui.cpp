@@ -1,6 +1,6 @@
 #include "includes/Gui.hpp"
 
-Gui::Gui() : input_chain( new InputChain() ), mouse( new Mouse() ), infobar( new Infobar() )
+Gui::Gui() : input_chain( new InputChain() ), mouse( new Mouse() )
 {
 	input_chain->AddHandler( mouse.get() );
 }
@@ -12,7 +12,7 @@ bool Gui::HandleEvent( hgeInputEvent &e )
 
 WorldListener *const Gui::GetListener()
 {
-	return infobar.get();
+	return this;
 }
 
 void Gui::Update( float dt )
@@ -22,5 +22,4 @@ void Gui::Update( float dt )
 void Gui::Render()
 {
 	mouse->Render();
-	infobar->Render();
 }
