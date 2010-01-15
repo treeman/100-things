@@ -58,13 +58,7 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 
 void World::PushBullet( boost::shared_ptr<Bullet> bullet )
 {
-	all_bullets.push_back( bullet );
-	if( bullet->Info().target == TARGET_ENEMY ) {
-		dude_bullets.push_back( bullet );
-	}
-	else {
-		enemy_bullets.push_back( bullet );
-	}
+	bullets.push_back( bullet );
 }
 
 void World::Update( float dt )
@@ -99,7 +93,7 @@ void World::Update( float dt )
 		}
 	}
 
-	BOOST_FOREACH( boost::shared_ptr<Bullet> b, all_bullets )
+	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 	{
 		b->Update( dt );
 	}
@@ -123,9 +117,9 @@ void World::Update( float dt )
 		
 		a->Update( dt );
 		
-		BOOST_FOREACH( boost::shared_ptr<Bullet> b, dude_bullets )
+		BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 		{
-			if( a->Bounds().Overlap( b->Bounds() ) ) {
+			if( b->Info().target == TARGET_ENEMY && a->Bounds().Overlap( b->Bounds() ) ) {
 				Frag( a, b );
 			}
 		}
@@ -140,7 +134,8 @@ void World::Update( float dt )
 		curr_lvl->Update( dt );
 	}
 	
-	all_bullets.erase( std::remove_if( all_bullets.begin(), all_bullets.end(), bullet_gone ), all_bullets.end() );
+	bullets.erase( std::remove_if( bullets.begin(), bullets.end(), bullet_gone ), bullets.end() );
+	
 	enemies.erase( std::remove_if( enemies.begin(), enemies.end(), enemy_gone ), enemies.end() );
 	
 	notifier->Update( dt );
@@ -152,7 +147,7 @@ void World::Render()
 	
 	dude->Render();
 	
-	BOOST_FOREACH( boost::shared_ptr<Bullet> b, all_bullets )
+	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 	{
 		b->Render();
 	}
@@ -238,11 +233,11 @@ void World::RenderDebug()
 	
 	if( show_bullets ) {
 		arial10->SetColor( 0xffffffff );
-		arial10->printf( 200, 6, HGETEXT_LEFT, "num_bullets: %i", all_bullets.size() );
+		arial10->printf( 200, 6, HGETEXT_LEFT, "num_bullets: %i", bullets.size() );
 		int n = 0;
 		float line_height = arial10->GetHeight() + 2;
 		
-		for( Bullets::reverse_iterator rit = all_bullets.rbegin(); rit != all_bullets.rend() && n < 10; ++rit, ++n ) 
+		for( Bullets::reverse_iterator rit = bullets.rbegin(); rit != bullets.rend() && n < 10; ++rit, ++n ) 
 		{
 			arial10->printf( 200, 20 + line_height * n, HGETEXT_LEFT, "vel: %.1f", 
 			(*rit)->Info().vel.Length() );

@@ -1,9 +1,11 @@
 #ifndef SIMPLENEMY_HPP_INCLUDED
 #define SIMPLENEMY_HPP_INCLUDED
 
-#include "Enemy.hpp"
 #include "System/ShuffleBag.hpp"
 #include "System/Timer.hpp"
+
+#include "Enemy.hpp"
+#include "Weapon.hpp"
 
 class PippiAfro : public Enemy {
 public:
@@ -82,6 +84,8 @@ public:
 
 	bool HasReachedGoal();
 	
+	void SetPos( Vec2D p );
+	
 	void Update( float dt );
 	void Render();
 private:
@@ -100,6 +104,8 @@ private:
 	float delay;
 	
 	ShuffleBag<float> delay_bag;
+	
+	boost::shared_ptr<Weapon> weapon;
 	
 	World *const world;
 };

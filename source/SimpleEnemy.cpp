@@ -1,6 +1,7 @@
 #include "includes/SimpleEnemy.hpp"
 #include "includes/SimpleBullet.hpp"
 #include "includes/World.hpp"
+#include "includes/SimpleWeapon.hpp"
 
 PippiAfro::PippiAfro( Vec2D pos ) : Enemy( pos ), max_acc( 2000 ), max_vel( 200 ), w( 26 ), h( 20 )
 {
@@ -31,8 +32,8 @@ void PippiAfro::Update( float dt )
 	vel.TruncateLength( max_vel );
 	
 	const Vec2D new_pos = pos + new_vel * dt;
-
-	pos = new_pos;
+	
+	SetPos( new_pos );
 }
 void PippiAfro::Render()
 {
@@ -153,7 +154,7 @@ void AfroWorm::FaceRight()
 }
 
 ShooterAfro::ShooterAfro( Vec2D pos, World *const _world ) : Enemy( pos ), max_acc( 2000 ), max_vel( 200 ), w( 42 ), h( 36 )
-	,world( _world )
+	, weapon( new AfroShooterWeapon() ), world( _world )
 {
 	tex.Load( "gfx/shooterafro.png" );
 	spr.reset( new hgeSprite( tex, 0, 0, w, h ) );
@@ -174,6 +175,12 @@ bool ShooterAfro::HasReachedGoal()
 	const Vec2D dist = pos - target_pos;
 	return dist.Length() < 10;
 }
+
+void ShooterAfro::SetPos( Vec2D p )
+{
+	pos = p;
+	weapon->SetPos( pos );
+}
 	
 void ShooterAfro::Update( float dt )
 {
@@ -193,7 +200,7 @@ void ShooterAfro::Update( float dt )
 	
 	const Vec2D new_pos = pos + new_vel * dt;
 
-	pos = new_pos;
+	SetPos( new_pos );
 }
 void ShooterAfro::Render()
 {
@@ -204,9 +211,11 @@ void ShooterAfro::Render()
 
 void ShooterAfro::Shoot()
 {
-	const float target_x = pos.x;// + hge->Random_Float( -20, 20 ); 
-	boost::shared_ptr<Bullet> bullet( new AfroBullet( pos, Vec2D( 400, 600 ) ) );
-	world->PushBullet( bullet );
+	const float target_x = pos.x + hge->Random_Float( -80, 80 ); 
+	boost::shared_ptr<Bullet> bullet = weapon->Shoot( Vec2D( target_x, 600 ) );
+	if( bullet ) {
+		world->PushBullet( bullet );
+	}
 }
 
 void ShooterAfro::ResetShootDelay()

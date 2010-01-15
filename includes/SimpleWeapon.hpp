@@ -15,11 +15,11 @@ protected:
 	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
 };
 
-//class AfroShooterWeapon : public Weapon {
-//public:
-//	AfroShooterWeapon();
-//protected:
-//	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
-//};
+class AfroShooterWeapon : public Weapon {
+public:
+	AfroShooterWeapon();
+protected:
+	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
+};
 
 #endif

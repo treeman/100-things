@@ -10,7 +10,7 @@
 
 class Weapon {
 public:
-	Weapon( float bullet_delay );
+	Weapon( float bullet_delay, float x_off, float y_off );
 	virtual ~Weapon() { }
 	
 	Vec2D GetPos() const {
@@ -27,6 +27,7 @@ private:
 	const float bullet_delay;
 	
 	Timer delay_timer;
+	const float x_off, y_off;
 	
 	Vec2D pos;
 };

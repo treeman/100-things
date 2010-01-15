@@ -50,9 +50,7 @@ private:
 	
 	typedef std::vector<boost::shared_ptr<Bullet> > Bullets;
 	
-	Bullets dude_bullets;
-	Bullets enemy_bullets;
-	Bullets all_bullets;
+	Bullets bullets;
 	
 	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
 	Enemies enemies;
