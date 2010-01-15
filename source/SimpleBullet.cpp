@@ -18,10 +18,10 @@ void SimpleBullet::Update( float dt )
 }
 void SimpleBullet::Render()
 {
-	const float x1 = info.pos.x;
-	const float y1 = info.pos.y;
-	const float x2 = info.pos.x + 2;
-	const float y2 = info.pos.y + 2;
+	const float x1 = info.pos.x + shake_x_offset;
+	const float y1 = info.pos.y + shake_y_offset;
+	const float x2 = info.pos.x + 2 + shake_x_offset;
+	const float y2 = info.pos.y + 2 + shake_y_offset;
 	
 	hgeh::render_solid_rect( hge, x1, y1, x2, y2, 0xff000000 );
 }
@@ -45,5 +45,5 @@ void AfroBullet::Update( float dt )
 }
 void AfroBullet::Render()
 {
-	spr->Render( info.pos.x, info.pos.y );
+	spr->Render( info.pos.x + shake_x_offset, info.pos.y + shake_y_offset );
 }

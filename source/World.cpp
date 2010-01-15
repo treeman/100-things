@@ -24,12 +24,13 @@ bool enemy_out_of_bounds( boost::shared_ptr<Enemy> a )
 }
 
 World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() ),
-	level_loader( new LevelLoader() )
+	level_loader( new LevelLoader() ), shake_time( 0.3 ), num_shakes( 3 ), shake_decline( 0.75 ), max_x_shake( 10 ),
+	max_y_shake( 8 ), shake_level( 0 ), shake_num( 0 )
 {
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	const int h = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_height" ) );
 	
-	ground.reset( new Ground( -w, h - 40, w * 2, 40 ) );
+	ground.reset( new Ground( -w / 2, h - 40, w * 2, 100 ) );
 	
 	InitDators();
 	
@@ -54,6 +55,9 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	background.reset( new ABackground() );
 	
 	AddListener( background.get() );
+	
+	//reset the shakes
+	ShakeDone();
 }
 
 void World::PushBullet( boost::shared_ptr<Bullet> bullet )
@@ -140,7 +144,10 @@ void World::Update( float dt )
 	
 	notifier->Update( dt );
 	background->Update( dt );
+	
+	UpdateShake();
 }
+
 void World::Render()
 {
 	background->Render();
@@ -212,6 +219,75 @@ void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bull
 	{
 		listener->ReportEnemyKilled();
 	}
+	
+	Shake( 0.6 );
+}
+
+void World::Shake( float level )
+{
+	if( !shake_timer.IsStarted() ) {
+		shake_level = level;
+		shake_timer.Start();
+	}
+}
+
+void World::UpdateShake()
+{
+	if( !shake_timer.IsStarted() ) return;
+
+	const float shake_perc = shake_timer.GetTime() / shake_time;
+	const float shake_num_time = shake_time / num_shakes;
+	shake_num = (int)( shake_timer.GetTime() / shake_num_time );
+	
+	if( shake_perc >= 1.0 ) {
+		ShakeDone();
+		return;
+	}
+	
+	const float shake_mod = std::pow( shake_decline, shake_num ) * shake_level;
+	
+	const float x_shake_distance = ( max_x_shake * 2 ) * shake_mod;
+	const float y_shake_distance = ( max_y_shake * 2 ) * shake_mod;
+	
+	const float this_shake_perc = shake_perc * ( 1 - shake_num / num_shakes );
+	
+	const float x_pos = x_shake_distance * this_shake_perc;
+	const float x_offset = ( shake_num % 2 ? max_x_shake - x_pos : -x_pos );
+	
+	const float y_pos = y_shake_distance * this_shake_perc;
+	const float y_offset = ( shake_num % 2 ? max_y_shake - y_pos : -y_pos );
+	
+	OffsetScreen( x_offset, y_offset );
+}
+
+void World::OffsetScreen( float x_off, float y_off )
+{
+	background->SetShakeOffset( x_off, y_off );
+	ground->SetShakeOffset( x_off, y_off );
+	dude->SetShakeOffset( x_off, y_off );
+	
+	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+	{
+		b->SetShakeOffset( x_off, y_off );
+	}
+	
+	BOOST_FOREACH( boost::shared_ptr<Enemy> e, enemies )
+	{
+		e->SetShakeOffset( x_off, y_off );
+	}
+	
+	shake_x_offset = x_off;
+	shake_y_offset = y_off;
+}
+
+void World::ShakeDone()
+{
+	shake_timer.Stop();
+	shake_level = 0;
+	shake_num = 0;
+	shake_pos = 0;
+	
+	OffsetScreen( 0, 0 );
 }
 
 void World::InitDators()
@@ -223,6 +299,10 @@ void World::InitDators()
 	show_bounds = false;
 	showBounds.reset( new Dator<bool>( show_bounds ) );
 	Settings::Get().RegisterVariable( "collision_box_show", boost::weak_ptr<BaseDator>( showBounds ) );
+	
+	show_shakeinfo = true;
+	showShakeInfo.reset( new Dator<bool>( show_shakeinfo ) );
+	Settings::Get().RegisterVariable( "shake_info_show", boost::weak_ptr<BaseDator>( showShakeInfo ) );
 }
 
 void World::RenderDebug()
@@ -256,5 +336,18 @@ void World::RenderDebug()
 			const Shape::Rect box = a->Bounds();
 			hgeh::render_rect( hge, box.x, box.y, box.x + box.w, box.y + box.h, 0xffffffff );
 		}
+		BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+		{
+			const Shape::Rect box = b->Bounds();
+			hgeh::render_rect( hge, box.x, box.y, box.x + box.w, box.y + box.h, 0xffffffff );
+		}
+		
+	}
+	
+	if( show_shakeinfo ) {
+		
+		arial10->printf( 450, 50, HGETEXT_LEFT, "shake_lvl: %.1f, shake_num: %i, shake_timer: %.1f", 
+			shake_level, shake_num, shake_timer.GetTime() );
+		arial10->printf( 450, 60, HGETEXT_LEFT, "x_off: %.2f y_off %.2f", shake_x_offset, shake_y_offset );
 	}
 }

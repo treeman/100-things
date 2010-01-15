@@ -16,6 +16,7 @@
 #include "LevelLoader.hpp"
 #include "WorldListener.hpp"
 #include "Background.hpp"
+#include "Shakeable.hpp"
 
 class World {
 public:
@@ -35,6 +36,8 @@ public:
 	void RandomizeTargetPos( boost::shared_ptr<Enemy> a );
 	
 	void AddListener( WorldListener *const listener );
+	
+	void Shake( float level );
 private:
 	void LoadLevel( boost::shared_ptr<Level> lvl );
 	
@@ -68,6 +71,23 @@ private:
 	
 	boost::shared_ptr<Background> background;
 	
+	void UpdateShake();
+	void OffsetScreen( float x_off, float y_off );
+	void ShakeDone();
+	
+	const float shake_time;
+	const int num_shakes;
+	const float shake_decline;
+	
+	const float max_x_shake, max_y_shake;
+	
+	Timer shake_timer;
+	float shake_level;
+	int shake_num;
+	int shake_pos;
+	
+	float shake_x_offset, shake_y_offset;
+	
 	void RenderDebug();
 	
 	void InitDators();
@@ -76,6 +96,8 @@ private:
 	boost::shared_ptr<Dator<bool> > showBullets;
 	bool show_bounds;
 	boost::shared_ptr<Dator<bool> > showBounds;
+	bool show_shakeinfo;
+	boost::shared_ptr<Dator<bool> > showShakeInfo;
 	
 	HgeObj hge;
 };

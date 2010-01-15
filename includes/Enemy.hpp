@@ -8,7 +8,9 @@
 #include "System/Shape.hpp"
 #include "System/Settings.hpp"
 
-class Enemy {
+#include "Shakeable.hpp"
+
+class Enemy : public Shakeable {
 public:
 	Enemy( Vec2D pos );
 	virtual ~Enemy() { }

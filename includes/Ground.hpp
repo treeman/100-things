@@ -4,22 +4,19 @@
 #include <boost/shared_ptr.hpp>
 
 #include "System/Hge.hpp"
+#include "System/Shape.hpp"
 
-class Ground {
+#include "Shakeable.hpp"
+
+class Ground : public Shakeable {
 public:
-	Ground( float _x, float _y, float _w, float _h ) : x(_x), y(_y), w(_w), h(_h)
-	{
-		spr.reset( new hgeSprite( 0, 0, 0, w, h ) );
-		spr->SetColor( 0xff000000 );
-	}
+	Ground( float _x, float _y, float _w, float _h );
 	
 	Shape::Rect Bounds() const {
 		return Shape::Rect( x, y, w, h );
 	}
 	
-	void Render() {
-		spr->Render( x, y );
-	}
+	void Render();
 private:
 	boost::shared_ptr<hgeSprite> spr;
 	float x, y;

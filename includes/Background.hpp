@@ -7,8 +7,9 @@
 #include "System/Timer.hpp"
 
 #include "WorldListener.hpp"
+#include "Shakeable.hpp"
 
-class Background : public WorldListener {
+class Background : public WorldListener, virtual public Shakeable {
 public:
 	virtual ~Background() { }
 	
@@ -23,7 +24,7 @@ struct Cloud {
 	float min_x, max_x;
 };
 
-class ABackground : public Background {
+class ABackground : virtual public Background, virtual public Shakeable {
 public:
 	ABackground();
 	

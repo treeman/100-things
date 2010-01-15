@@ -8,10 +8,11 @@
 #include "System/Shape.hpp"
 
 #include "Weapon.hpp"
+#include "Shakeable.hpp"
 
 class World;
 
-class Dude {
+class Dude : public Shakeable {
 public:
 	Dude( World *const world );
 	

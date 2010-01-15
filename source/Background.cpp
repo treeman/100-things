@@ -6,7 +6,7 @@
 
 const float sky_height = 600;
 
-ABackground::ABackground() : asia30( new hgeFont( "fnt/asiaextended30.fnt" ) ), 
+ABackground::ABackground() : Shakeable( 0.2, 0.2 ), asia30( new hgeFont( "fnt/asiaextended30.fnt" ) ), 
 	asia23( new hgeFont( "fnt/asiaextended23.fnt" ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ),
 	rage( 0 ), enemies_killed( 0 )
 {
@@ -69,17 +69,17 @@ void ABackground::Render()
 	const DWORD cloud_color = 0x77610303;
 
 	time_cloud.spr->SetColor( cloud_color );
-	time_cloud.spr->Render( time_cloud.x, time_cloud.y );
+	time_cloud.spr->Render( time_cloud.x + shake_x_offset, time_cloud.y + shake_y_offset );
 	
 	kill_cloud.spr->SetColor( cloud_color );
-	kill_cloud.spr->Render( kill_cloud.x, kill_cloud.y );
+	kill_cloud.spr->Render( kill_cloud.x + shake_x_offset, kill_cloud.y + shake_y_offset );
 	
 	rage_cloud.spr->SetColor( cloud_color );
-	rage_cloud.spr->Render( rage_cloud.x, rage_cloud.y );
+	rage_cloud.spr->Render( rage_cloud.x + shake_x_offset, rage_cloud.y + shake_y_offset );
 	
 	asia30->SetColor( 0xff953c53 );
 	
-	asia30->printf( kill_cloud.x + 100, kill_cloud.y + 60, HGETEXT_LEFT, "%i", enemies_killed );
+	asia30->printf( kill_cloud.x + 100 + shake_x_offset, kill_cloud.y + 60 + shake_y_offset, HGETEXT_LEFT, "%i", enemies_killed );
 	
 	const int minutes = (int)timer.GetTime() / 60;
 	const int seconds = (int)timer.GetTime() - minutes * 60;
@@ -89,8 +89,8 @@ void ABackground::Render()
 	ss << minutes << ( seconds < 10 ? ":0" : ":" ) << seconds;
 	
 	asia30->SetColor( 0xffb64d54 );
-	asia30->Render( time_cloud.x + 50, time_cloud.y + 5, HGETEXT_LEFT, ss.str().c_str() );
+	asia30->Render( time_cloud.x + 50 + shake_x_offset, time_cloud.y + 5 + shake_y_offset, HGETEXT_LEFT, ss.str().c_str() );
 	
 	asia30->SetColor( 0xffad4853 );
-	asia30->printf( rage_cloud.x + 50, rage_cloud.y + 4, HGETEXT_LEFT, "%i", rage );
+	asia30->printf( rage_cloud.x + 50 + shake_x_offset, rage_cloud.y + 4 + shake_y_offset, HGETEXT_LEFT, "%i", rage );
 }

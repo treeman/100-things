@@ -37,7 +37,7 @@ void PippiAfro::Update( float dt )
 }
 void PippiAfro::Render()
 {
-	spr->Render( (int)pos.x, (int)pos.y );
+	spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
 	
 	RenderDebug();
 }
@@ -76,7 +76,7 @@ void MutantAfro::Update( float dt )
 }
 void MutantAfro::Render()
 {
-	spr->Render( (int)pos.x, (int)pos.y );
+	spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
 	
 	RenderDebug();
 }
@@ -139,7 +139,7 @@ void AfroWorm::Update( float dt )
 }
 void AfroWorm::Render()
 {
-	spr->Render( (int)pos.x, (int)pos.y + 4 );
+	spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + 4 + (int)shake_y_offset );
 	
 	RenderDebug();
 }
@@ -204,7 +204,7 @@ void ShooterAfro::Update( float dt )
 }
 void ShooterAfro::Render()
 {
-	spr->Render( (int)pos.x, (int)pos.y );
+	spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
 	
 	RenderDebug();
 }

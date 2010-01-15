@@ -5,6 +5,8 @@
 #include "System/Vec2D.hpp"
 #include "System/Shape.hpp"
 
+#include "Shakeable.hpp"
+
 enum Target {
 	TARGET_DUDE,
 	TARGET_ENEMY
@@ -16,7 +18,7 @@ struct BulletInfo {
 	Target target;
 };
 
-class Bullet {
+class Bullet : public Shakeable {
 public:
 	Bullet() : can_kill( false ) { }
 	virtual ~Bullet() {}

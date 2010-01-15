@@ -5,7 +5,7 @@
 const float dude_w = 30;
 const float dude_h = 50;
 
-Dude::Dude( World *const _world ) : world( _world )
+Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), world( _world )
 {
 	tex.Load( "gfx/dude.png" );
 	spr.reset( new hgeSprite( tex, 0, 0, dude_w, dude_h ) );
@@ -80,7 +80,7 @@ void Dude::Update( float dt )
 }
 void Dude::Render()
 {
-	spr->Render( (int)pos.x, (int)pos.y );
+	spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
 }
 
 void Dude::SetOrientation()
