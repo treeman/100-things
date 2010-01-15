@@ -88,6 +88,8 @@ private:
 	
 	float shake_x_offset, shake_y_offset;
 	
+	EffectObj shake_eff;
+	
 	void RenderDebug();
 	
 	void InitDators();

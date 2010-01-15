@@ -15,6 +15,10 @@ public:
 	SimpleWeapon();
 protected:
 	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
+	void PlayShootSound();
+	
+	EffectObj eff;
+	HgeObj hge;
 };
 
 class AfroShooterWeapon : public Weapon {

@@ -56,6 +56,8 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	
 	AddListener( background.get() );
 	
+	shake_eff.Load( "sound/quake.wav" );
+	
 	//reset the shakes
 	ShakeDone();
 }
@@ -63,6 +65,7 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 void World::PushBullet( boost::shared_ptr<Bullet> bullet )
 {
 	bullets.push_back( bullet );
+	Shake( 0.1 );
 }
 
 void World::Update( float dt )
@@ -228,9 +231,16 @@ void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bull
 
 void World::Shake( float level )
 {
-	if( !shake_timer.IsStarted() ) {
+	if( level > shake_level ) {
 		shake_level = level;
-		shake_timer.Start();
+		shake_timer.Restart();
+		
+		const float max_sound = 100;
+		const float min_sound = 10;
+		
+		const float vol = min_sound + ( max_sound - min_sound ) * level;
+		
+		hge->Effect_PlayEx( shake_eff, vol );
 	}
 }
 

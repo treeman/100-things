@@ -7,6 +7,7 @@
 #include "World.hpp"
 #include "Controller.hpp"
 #include "Gui.hpp"
+#include "Tracks.hpp"
 
 class GameWorld : public GameState {
 public:
@@ -30,6 +31,7 @@ private:
 	boost::shared_ptr<Controller> controller;
 	
 	boost::shared_ptr<Gui> gui;
+	boost::shared_ptr<Tracks> tracks;
 	
 	HgeObj hge;
 };
