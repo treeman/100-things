@@ -23,6 +23,7 @@ public:
 	boost::shared_ptr<Bullet> Shoot( Vec2D target );
 protected:
 	virtual boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D target ) = 0;
+	virtual void PlayShootSound() { }
 private:
 	const float bullet_delay;
 	

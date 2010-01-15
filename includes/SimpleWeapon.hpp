@@ -5,6 +5,8 @@
 
 #include "System/Timer.hpp"
 #include "System/Vec2D.hpp"
+#include "System/Hge.hpp"
+
 #include "Weapon.hpp"
 #include "SimpleBullet.hpp"
 
@@ -20,6 +22,10 @@ public:
 	AfroShooterWeapon();
 protected:
 	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
+	void PlayShootSound();
+	
+	EffectObj eff;
+	HgeObj hge;
 };
 
 #endif

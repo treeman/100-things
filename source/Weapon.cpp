@@ -15,6 +15,8 @@ boost::shared_ptr<Bullet> Weapon::Shoot( Vec2D target )
 		Vec2D dir = target - fire_pos;
 		dir.Normalize();
 		
+		PlayShootSound();
+		
 		return GetBullet( fire_pos, dir );
 	}
 	else {
