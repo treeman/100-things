@@ -132,6 +132,7 @@ void World::Update( float dt )
 	BOOST_FOREACH( WorldListener *listener, listeners )
 	{
 		listener->SetDudePos( dude->GetPos() );
+		listener->SetRageLevel( dude->GetRage() );
 	}
 	
 	if( curr_lvl ) {
@@ -214,6 +215,8 @@ void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bull
 	bullet->Kill();
 	curr_lvl->EnemyDead( enemy );
 	notifier->Add( "Eat my shorts" );
+	
+	dude->EnemyKilled();
 	
 	BOOST_FOREACH( WorldListener *listener, listeners )
 	{

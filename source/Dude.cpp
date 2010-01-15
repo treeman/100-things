@@ -1,31 +1,77 @@
+#include <boost/foreach.hpp>
+
 #include "includes/Dude.hpp"
 #include "includes/World.hpp"
 #include "includes/SimpleWeapon.hpp"
 
-const float dude_w = 30;
-const float dude_h = 50;
-
-Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), world( _world )
+Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), rage_decline( 0.2 ), rage_max_acc( 1400 ), rage_min_acc( 400 ), world( _world )
 {
-	tex.Load( "gfx/dude.png" );
-	spr.reset( new hgeSprite( tex, 0, 0, dude_w, dude_h ) );
-	spr->SetHotSpot( 0, dude_h );
+	dude_tex.Load( "gfx/dudes.png" );
 	
-	max_acc = 400;
-	max_vel = 200;
+	boost::shared_ptr<Img> d( new Img() );
+	
+	//lvl0
+	d->w = 18; d->h = 37;
+	d->spr.reset( new hgeSprite( dude_tex, 18, 33, d->w, d->h ) );
+	d->spr->SetHotSpot( 0, d->h );
+	dudes.push_back( d );
+	
+	d.reset( new Img() );
+	
+	//lvl1
+	d->w = 20; d->h = 41;
+	d->spr.reset( new hgeSprite( dude_tex, 77, 29, d->w, d->h ) );
+	d->spr->SetHotSpot( 0, d->h );
+	dudes.push_back( d );
+	
+	d.reset( new Img() );
+	
+	//lvl2
+	d->w = 23; d->h = 42;
+	d->spr.reset( new hgeSprite( dude_tex, 136, 28, d->w, d->h ) );
+	d->spr->SetHotSpot( 0, d->h );
+	dudes.push_back( d );
+	
+	d.reset( new Img() );
+	
+	//lvl3
+	d->w = 26; d->h = 49;
+	d->spr.reset( new hgeSprite( dude_tex, 195, 22, d->w, d->h ) );
+	d->spr->SetHotSpot( 0, d->h );
+	dudes.push_back( d );
+	
+	d.reset( new Img() );
+	
+	//lvl4
+	d->w = 37; d->h = 56;
+	d->spr.reset( new hgeSprite( dude_tex, 249, 14, d->w, d->h ) );
+	d->spr->SetHotSpot( 0, d->h );
+	dudes.push_back( d );
+	
+	d.reset( new Img() );
+	
+	//lvl5
+	d->w = 52; d->h = 67;
+	d->spr.reset( new hgeSprite( dude_tex, 301, 3, d->w, d->h ) );
+	d->spr->SetHotSpot( 0, d->h );
+	dudes.push_back( d );
+	
+	dude = dudes[0];
 	
 	weapon.reset( new SimpleWeapon() );
 	
-	SetPos( Vec2D( 20, 600 - dude_h ) );
+	SetPos( Vec2D( 20, 600 - dude->h ) );
+	
+	SetRage( 0 );
 }
 
 void Dude::MoveLeft()
 {
-	acc += Vec2D( -max_acc, 0 );
+	acc += Vec2D( -curr_max_acc, 0 );
 }
 void Dude::MoveRight()
 {
-	acc += Vec2D( max_acc, 0 );
+	acc += Vec2D( curr_max_acc, 0 );
 }
 
 void Dude::Shoot( Vec2D target )
@@ -53,6 +99,38 @@ void Dude::Roll()
 	
 }
 
+void Dude::EnemyKilled()
+{
+	SetRage( rage + 0.01 );
+}
+
+void Dude::SetRage( float perc )
+{
+	rage = perc;
+	if( rage > 1.0 ) rage = 1.0;
+	
+	if( rage < 0.2 ) {
+		dude = dudes[0];
+	}
+	else if( rage < 0.4 ) {
+		dude = dudes[1];
+	}
+	else if( rage < 0.55 ) {
+		dude = dudes[2];
+	}
+	else if( rage < 0.7 ) {
+		dude = dudes[3];
+	}
+	else if( rage < 0.9 ) {
+		dude = dudes[4];
+	}
+	else if( rage >= 0.9 ) {
+		dude = dudes[5];
+	}
+	
+	curr_max_acc = rage_min_acc + ( rage_max_acc - rage_min_acc ) * rage;
+}
+
 void Dude::SetPos( Vec2D p ) {
 	pos = p;
 	weapon->SetPos( p );
@@ -60,12 +138,14 @@ void Dude::SetPos( Vec2D p ) {
 
 Shape::Rect Dude::Bounds()
 {
-	return Shape::Rect( pos.x, pos.y - dude_h, dude_w,dude_h );
+	return Shape::Rect( pos.x, pos.y - dude->h, dude->w, dude->h );
 }
 
 void Dude::Update( float dt )
 {
 	SetOrientation();
+	
+//	SetRage( rage - rage * rage_decline * dt );
 	
 	const Vec2D gravity( 0, 1000 );
 	
@@ -80,7 +160,7 @@ void Dude::Update( float dt )
 }
 void Dude::Render()
 {
-	spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
+	dude->spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
 }
 
 void Dude::SetOrientation()
@@ -88,19 +168,19 @@ void Dude::SetOrientation()
 	float mx, my;
 	hge->Input_GetMousePos( &mx, &my );
 	
-	if( mx < pos.x + dude_w / 2 ) {
+	if( mx < pos.x + dude->w / 2 ) {
 		FaceLeft();
 	}
-	else if( mx > pos.x + dude_w / 2 ) {
+	else if( mx > pos.x + dude->w / 2 ) {
 		FaceRight();
 	}
 }
 
 void Dude::FaceLeft()
 {
-	spr->SetFlip( true, false );
+	dude->spr->SetFlip( true, false );
 }
 void Dude::FaceRight()
 {
-	spr->SetFlip( false, false );
+	dude->spr->SetFlip( false, false );
 }

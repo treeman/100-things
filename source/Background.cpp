@@ -92,5 +92,5 @@ void ABackground::Render()
 	asia30->Render( time_cloud.x + 50 + shake_x_offset, time_cloud.y + 5 + shake_y_offset, HGETEXT_LEFT, ss.str().c_str() );
 	
 	asia30->SetColor( 0xffad4853 );
-	asia30->printf( rage_cloud.x + 50 + shake_x_offset, rage_cloud.y + 4 + shake_y_offset, HGETEXT_LEFT, "%i", rage );
+	asia30->printf( rage_cloud.x + 50 + shake_x_offset, rage_cloud.y + 10 + shake_y_offset, HGETEXT_LEFT, "%.0f", rage * 100 );
 }
