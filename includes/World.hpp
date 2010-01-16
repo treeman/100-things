@@ -18,9 +18,11 @@
 #include "Background.hpp"
 #include "Shakeable.hpp"
 
+class GameWorld;
+
 class World {
 public:
-	World();
+	World( GameWorld *const game_world );
 	
 	void Update( float dt );
 	void Render();
@@ -92,6 +94,12 @@ private:
 	
 	EffectObj shake_eff;
 	
+	int enemies_killed;
+	Timer total_timer;
+	
+	float stats_mod;
+	float stats_mod_incr;
+	
 	void RenderDebug();
 	
 	void InitDators();
@@ -104,6 +112,8 @@ private:
 	boost::shared_ptr<Dator<bool> > showShakeInfo;
 	
 	HgeObj hge;
+	
+	GameWorld *const game_world;
 };
 
 #endif

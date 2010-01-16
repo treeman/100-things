@@ -22,6 +22,8 @@ Level::Level( World *const _world ) : curr_info( 0 ), level_time( 0 ), fnt( new 
 	
 	total_enemies = 300;
 	enemies_spawned = 0;
+	
+	stats_mod = 1.0;
 }
 
 void Level::SetTargetPos( Enemies enemies )
@@ -80,6 +82,8 @@ boost::shared_ptr<Enemy> Level::GetEnemy()
 		++enemies_spawned;
 		
 	}
+	
+	enemy->SetStatsMod( stats_mod );
 	
 	return enemy;
 }

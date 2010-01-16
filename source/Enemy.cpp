@@ -9,6 +9,8 @@ Enemy::Enemy( Vec2D _pos ) : acc( 0,0 ), vel( 0,0 ), pos( _pos ), target_pos( _p
 	show_debug = false;
 	showDebug.reset( new Dator<bool>( show_debug ) );
 	Settings::Get().RegisterVariable( "enemies_debug", boost::weak_ptr<BaseDator>( showDebug ) );
+	
+	stats_mod = 1.0;
 }
 
 Shape::Rect Enemy::Bounds()

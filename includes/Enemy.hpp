@@ -54,6 +54,10 @@ public:
 		return target_pos;
 	}
 	
+	virtual void SetStatsMod( float m ) {
+		stats_mod = m;
+	}
+	
 	virtual bool HasReachedGoal() = 0;
 	
 	virtual void Update( float dt ) = 0;
@@ -66,6 +70,9 @@ protected:
 	Vec2D target_pos;
 	
 	bool can_kill;
+	float speed_mod;
+	
+	float stats_mod;
 	
 	HgeObj hge;
 	

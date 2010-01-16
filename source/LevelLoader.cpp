@@ -188,3 +188,11 @@ bool LevelLoader::NoLevels()
 {
 	return curr == levels.size();
 }
+
+void LevelLoader::SetStatsMod( float mod )
+{
+	BOOST_FOREACH( boost::shared_ptr<Level> lvl, levels )
+	{
+		lvl->SetStatsMod( mod );
+	}
+}

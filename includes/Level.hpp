@@ -44,6 +44,10 @@ public:
 	
 	boost::shared_ptr<Enemy> GetEnemy();
 	
+	void SetStatsMod( float mod ) {
+		stats_mod = mod;
+	}
+	
 	void Update( float dt );
 	void Render();
 private:
@@ -67,6 +71,8 @@ private:
 	
 	float level_time;
 	float total_level_time;
+	
+	float stats_mod;
 	
 	friend class LevelLoader;
 	

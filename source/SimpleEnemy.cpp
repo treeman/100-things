@@ -25,11 +25,11 @@ void PippiAfro::Update( float dt )
 	const Vec2D desired = target_pos - pos;
 	acc = desired - vel;
 	
-	acc.TruncateLength( max_acc );
+	acc.TruncateLength( max_acc * stats_mod );
 	
 	const Vec2D new_vel = vel + acc * dt;
 	vel = new_vel;
-	vel.TruncateLength( max_vel );
+	vel.TruncateLength( max_vel * stats_mod );
 	
 	const Vec2D new_pos = pos + new_vel * dt;
 	
@@ -64,11 +64,11 @@ void MutantAfro::Update( float dt )
 	const Vec2D desired = target_pos - pos;
 	acc = desired - vel;
 	
-	acc.SetLength( max_acc );
+	acc.SetLength( max_acc * stats_mod );
 	
 	const Vec2D new_vel = vel + acc * dt;
 	vel = new_vel;
-	vel.SetLength( max_vel );
+	vel.SetLength( max_vel * stats_mod );
 	
 	const Vec2D new_pos = pos + new_vel * dt;
 
@@ -119,11 +119,11 @@ void AfroWorm::Update( float dt )
 {
 	const Vec2D desired = target_pos - pos;
 	acc = desired - vel;
-	acc.SetLength( max_acc );
+	acc.SetLength( max_acc * stats_mod );
 	
 	const Vec2D new_vel = vel + acc * dt;
 	vel = new_vel;
-	vel.TruncateLength( max_vel );
+	vel.TruncateLength( max_vel * stats_mod );
 	
 	if( vel.x > 0 ) {
 		FaceRight();
@@ -184,7 +184,7 @@ void ShooterAfro::SetPos( Vec2D p )
 	
 void ShooterAfro::Update( float dt )
 {
-	if( shoot_time.GetTime() > delay ) {
+	if( shoot_time.GetTime() * stats_mod > delay ) {
 		Shoot();
 		ResetShootDelay();
 	}
@@ -192,11 +192,11 @@ void ShooterAfro::Update( float dt )
 	const Vec2D desired = target_pos - pos;
 	acc = desired - vel;
 	
-	acc.TruncateLength( max_acc );
+	acc.TruncateLength( max_acc * stats_mod );
 	
 	const Vec2D new_vel = vel + acc * dt;
 	vel = new_vel;
-	vel.TruncateLength( max_vel );
+	vel.TruncateLength( max_vel * stats_mod );
 	
 	const Vec2D new_pos = pos + new_vel * dt;
 

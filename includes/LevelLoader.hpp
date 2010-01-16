@@ -19,6 +19,8 @@ public:
 	}
 	
 	bool NoLevels();
+	
+	void SetStatsMod( float mod );
 private:
 	typedef std::vector<boost::shared_ptr<Level> > Levels;
 	Levels levels;

@@ -5,6 +5,7 @@
 
 #include "includes/World.hpp"
 #include "includes/SimpleEnemy.hpp"
+#include "includes/GameWorld.hpp"
 
 bool bullet_gone( boost::shared_ptr<Bullet> b )
 {
@@ -23,9 +24,10 @@ bool enemy_out_of_bounds( boost::shared_ptr<Enemy> a )
 	return a->GetPos().x < 0 || a->GetPos().x > 800 || a->GetPos().y < 0 || a->GetPos().y > 600;
 }
 
-World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() ),
+World::World( GameWorld *const _game_world ) : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() ),
 	level_loader( new LevelLoader( this ) ), shake_time( 0.3 ), num_shakes( 3 ), shake_decline( 0.75 ), max_x_shake( 10 ),
-	max_y_shake( 8 ), shake_level( 0 ), shake_num( 0 )
+	max_y_shake( 8 ), shake_level( 0 ), shake_num( 0 ), enemies_killed( 0 ), stats_mod( 1.0 ), stats_mod_incr( 0.5 ),
+	game_world( _game_world )
 {
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
 	const int h = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_height" ) );
@@ -46,6 +48,8 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	
 	//reset the shakes
 	ShakeDone();
+	
+	total_timer.Start();
 }
 
 void World::PushBullet( boost::shared_ptr<Bullet> bullet )
@@ -98,6 +102,10 @@ void World::Update( float dt )
 				(*it2)->Kill();
 			}
 		}
+		
+		if( (*it)->Info().target != TARGET_ENEMY && (*it)->Bounds().Collision( dude->Bounds() ) ) {
+			GameOver();
+		}
 	}
 		
 	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
@@ -115,6 +123,10 @@ void World::Update( float dt )
 		}
 		if( a->HasReachedGoal() ) {
 			curr_lvl->GoalReached( a );
+		}
+		
+		if( a->Bounds().Collision( dude->Bounds() ) ) {
+			GameOver();
 		}
 		
 	
@@ -216,18 +228,21 @@ void World::LevelCompleted()
 }
 void World::GameCompleted()
 {
-	level_loader->ResetCounter();
-	LoadLevel( level_loader->GetNextLevel() );
+	stats_mod += stats_mod_incr;
+	level_loader->SetStatsMod( stats_mod );
 }
 void World::GameOver()
 {
-	
+	game_world->GameOver( total_timer.GetTime(), enemies_killed );
 }
 
 void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bullet )
 {
 	enemy->Kill();
 	bullet->Kill();
+	
+	++enemies_killed;
+	
 	curr_lvl->EnemyDead( enemy );
 	notifier->Add( "Eat my shorts" );
 	

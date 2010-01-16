@@ -22,6 +22,9 @@ public:
     std::string StateId() {
 		return "GameWorld";
 	}
+	
+	void GameCompleted( float total_time, int enemies_killed );
+	void GameOver( float total_time, int enemies_killed );
 private:
 	StateHandler * const state_handler;
 	

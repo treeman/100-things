@@ -1,8 +1,9 @@
 #include "includes/GameWorld.hpp"
+#include "includes/Scoreboard.hpp"
 
 GameWorld::GameWorld( StateHandler * const _state_handler ) : 
 	GameState(_state_handler), state_handler(_state_handler), input_chain( new InputChain() ), 
-	world( new World() ), controller( new Controller( world->GetDude() ) ), gui( new Gui() ), tracks( new Tracks() )
+	world( new World( this ) ), controller( new Controller( world->GetDude() ) ), gui( new Gui() ), tracks( new Tracks() )
 {
 	input_chain->AddHandler( controller.get() );
 	input_chain->AddHandler( gui.get() );
@@ -38,4 +39,16 @@ void GameWorld::Render()
 {
 	world->Render();
 	gui->Render();
+}
+
+void GameWorld::GameCompleted( float total_time, int enemies_killed )
+{
+	
+}
+void GameWorld::GameOver( float total_time, int enemies_killed )
+{
+	boost::shared_ptr<Scoreboard> score( new Scoreboard( state_handler ) );
+	score->NewScore( total_time, enemies_killed );
+	state_handler->Pop();
+	state_handler->Push( score );
 }
