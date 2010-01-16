@@ -51,13 +51,10 @@ void Scoreboard::NewScore( float time, int kills )
 
 bool Scoreboard::HandleEvent( hgeInputEvent &e )
 {
-	if( e.type == INPUT_KEYDOWN ) {
-		switch( e.key ) {
-			case HGEK_ENTER:
-				state_handler->Pop();
-				boost::shared_ptr<GameWorld> state( new GameWorld( state_handler ) );
-				state_handler->Push( state );
-		}
+	if( e.type == INPUT_KEYDOWN || e.type == INPUT_MBUTTONDOWN ) {
+		state_handler->Pop();
+		boost::shared_ptr<GameWorld> state( new GameWorld( state_handler ) );
+		state_handler->Push( state );
 	}
 	return true;
 }

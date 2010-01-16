@@ -26,7 +26,7 @@ Game::Game( int argc, char *argv[] )
 	Settings::Get().ParseSetting( "music_volume 100" );
 	Settings::Get().ParseSetting( "effect_volume 100" );
 
-	Settings::Get().ParseSetting( "video_caption_title Experimental Project Base" );
+	Settings::Get().ParseSetting( "video_caption_title The Chronicles of Bim: The 100 Fake Afros" );
 	
 	try {
 		Settings::Get().ParseFile( "settings.ini" );
@@ -95,8 +95,8 @@ void Game::Init()
 	
 	boost::shared_ptr<GameState> state( new GameWorld( state_handler.get() ) );
 	state_handler->Push( state );
-//	state.reset( new Logo( state_handler.get() ) );
-//	state_handler->Push( state );
+	state.reset( new Logo( state_handler.get() ) );
+	state_handler->Push( state );
 	
 	curr_state = state_handler->Top();
 	
