@@ -199,7 +199,6 @@ void World::AddListener( WorldListener *const listener )
 void World::LoadLevel( boost::shared_ptr<Level> lvl )
 {
 	curr_lvl = lvl;
-	curr_lvl->SetTargetPos( enemies );
 }
 	
 void World::CheckLevelCompletion()
@@ -388,4 +387,6 @@ void World::RenderDebug()
 			shake_level, shake_num, shake_timer.GetTime() );
 		arial10->printf( 450, 60, HGETEXT_LEFT, "x_off: %.2f y_off %.2f", shake_x_offset, shake_y_offset );
 	}
+	
+	arial10->printf( 450, 100, HGETEXT_LEFT, "num_levels: %i", level_loader->GetNumLevels() );
 }
