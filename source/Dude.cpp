@@ -58,7 +58,7 @@ Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), rage_decline( 0.2 ), 
 	
 	dude = dudes[0];
 	
-	weapon.reset( new SimpleWeapon() );
+	weapon.reset( new SimpleWeapon( 0.10, 30, 2 ) );
 	
 	SetPos( Vec2D( 20, 600 - dude->h ) );
 	
@@ -111,21 +111,27 @@ void Dude::SetRage( float perc )
 	
 	if( rage < 0.2 ) {
 		dude = dudes[0];
+		weapon.reset( new SimpleWeapon( 0.2, 20, 2 ) );
 	}
 	else if( rage < 0.4 ) {
 		dude = dudes[1];
+		weapon.reset( new SimpleWeapon( 0.15, 25, 2 ) );
 	}
 	else if( rage < 0.55 ) {
 		dude = dudes[2];
+		weapon.reset( new SimpleWeapon( 0.12, 30, 3 ) );
 	}
 	else if( rage < 0.7 ) {
 		dude = dudes[3];
+		weapon.reset( new SimpleWeapon( 0.1, 30, 3 ) );
 	}
 	else if( rage < 0.9 ) {
 		dude = dudes[4];
+		weapon.reset( new SimpleWeapon( 0.08, 30, 4 ) );
 	}
 	else if( rage >= 0.9 ) {
 		dude = dudes[5];
+		weapon.reset( new SimpleWeapon( 0.06, 30, 5 ) );
 	}
 	
 	curr_max_acc = rage_min_acc + ( rage_max_acc - rage_min_acc ) * rage;
@@ -160,7 +166,7 @@ void Dude::Update( float dt )
 }
 void Dude::Render()
 {
-	dude->spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset );
+	dude->spr->Render( (int)pos.x + (int)shake_x_offset, (int)pos.y + (int)shake_y_offset + 2 );
 }
 
 void Dude::SetOrientation()

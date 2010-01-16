@@ -24,7 +24,7 @@ bool enemy_out_of_bounds( boost::shared_ptr<Enemy> a )
 }
 
 World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fnt" ) ), notifier( new Notifier() ),
-	level_loader( new LevelLoader() ), shake_time( 0.3 ), num_shakes( 3 ), shake_decline( 0.75 ), max_x_shake( 10 ),
+	level_loader( new LevelLoader( this ) ), shake_time( 0.3 ), num_shakes( 3 ), shake_decline( 0.75 ), max_x_shake( 10 ),
 	max_y_shake( 8 ), shake_level( 0 ), shake_num( 0 )
 {
 	const int w = boost::lexical_cast<int>( Settings::Get().GetValue( "video_screen_width" ) );
@@ -34,23 +34,27 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	
 	InitDators();
 	
-	for( int i = 0; i < 33; ++i ) {
-		boost::shared_ptr<Enemy> a( new PippiAfro( Vec2D( 8 * i, 0 ) ) );
-		enemies.push_back( a );
-	}
-	for( int i = 33; i < 66; ++i ) {
-		boost::shared_ptr<Enemy> a( new MutantAfro( Vec2D( 8 * i, 0 ) ) );
-		enemies.push_back( a );
-	}
-	for( int i = 66; i < 99; ++i ) {
-		boost::shared_ptr<Enemy> a( new ShooterAfro( Vec2D( 8 * i, 0 ), this ) );
-		enemies.push_back( a );
-	}
-	
-	boost::shared_ptr<Enemy> a( new AfroWorm( Vec2D( 0, 0 ), h - 40 ) );
-	enemies.push_back( a );
-	
+//	for( int i = 0; i < 33; ++i ) {
+//		boost::shared_ptr<Enemy> a( new PippiAfro( Vec2D( 8 * i, 0 ) ) );
+//		enemies.push_back( a );
+//	}
+//	for( int i = 33; i < 66; ++i ) {
+//		boost::shared_ptr<Enemy> a( new MutantAfro( Vec2D( 8 * i, 0 ) ) );
+//		enemies.push_back( a );
+//	}
+//	for( int i = 66; i < 99; ++i ) {
+//		boost::shared_ptr<Enemy> a( new ShooterAfro( Vec2D( 8 * i, 0 ), this ) );
+//		enemies.push_back( a );
+//	}
+//	
+//	boost::shared_ptr<Enemy> a( new AfroWorm( Vec2D( 0, 0 ), h - 40 ) );
+//	enemies.push_back( a );
+
 	LoadLevel( level_loader->GetNextLevel() );
+	
+	for( int i = 0; i < 100; ++i ) {
+		AddEnemy();
+	};
 	
 	background.reset( new ABackground() );
 	
@@ -100,9 +104,20 @@ void World::Update( float dt )
 		}
 	}
 
-	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+//	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
+	for( Bullets::iterator it = bullets.begin(); it != bullets.end(); ++it )
 	{
-		b->Update( dt );
+//		b->Update( dt );
+		(*it)->Update( dt );
+		
+		for( Bullets::iterator it2 = bullets.begin(); it2 != bullets.end(); ++it2 )
+		{
+			if( (*it)->Info().target != (*it2)->Info().target && (*it)->Bounds().Collision( (*it2)->Bounds() ) )
+			{
+				(*it)->Kill();
+				(*it2)->Kill();
+			}
+		}
 	}
 	
 	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
@@ -227,6 +242,16 @@ void World::Frag( boost::shared_ptr<Enemy> enemy, boost::shared_ptr<Bullet> bull
 	}
 	
 	Shake( 0.6 );
+	
+	AddEnemy();
+}
+
+void World::AddEnemy()
+{
+	boost::shared_ptr<Enemy> enemy = curr_lvl->GetEnemy();
+	if( enemy ) {
+		enemies.push_back( enemy );
+	}
 }
 
 void World::Shake( float level )
@@ -240,7 +265,7 @@ void World::Shake( float level )
 		
 		const float vol = min_sound + ( max_sound - min_sound ) * level;
 		
-		hge->Effect_PlayEx( shake_eff, vol );
+		hge->Effect_PlayEx( shake_eff, (int)vol );
 	}
 }
 

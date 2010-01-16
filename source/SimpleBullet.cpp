@@ -1,6 +1,6 @@
 #include "includes/SimpleBullet.hpp"
 
-SimpleBullet::SimpleBullet( Vec2D pos, Vec2D dir )
+SimpleBullet::SimpleBullet( Vec2D pos, Vec2D dir, int _size ) : size( _size )
 {
 	info.pos = pos;
 	info.vel = dir;
@@ -9,7 +9,7 @@ SimpleBullet::SimpleBullet( Vec2D pos, Vec2D dir )
 }
 
 Shape::Rect SimpleBullet::Bounds() const {
-	return Shape::Rect( info.pos.x, info.pos.y, 2, 2 );
+	return Shape::Rect( info.pos.x, info.pos.y, size, size );
 }
 	
 void SimpleBullet::Update( float dt )
@@ -20,8 +20,8 @@ void SimpleBullet::Render()
 {
 	const float x1 = info.pos.x + shake_x_offset;
 	const float y1 = info.pos.y + shake_y_offset;
-	const float x2 = info.pos.x + 2 + shake_x_offset;
-	const float y2 = info.pos.y + 2 + shake_y_offset;
+	const float x2 = info.pos.x + size + shake_x_offset;
+	const float y2 = info.pos.y + size + shake_y_offset;
 	
 	hgeh::render_solid_rect( hge, x1, y1, x2, y2, 0xff000000 );
 }

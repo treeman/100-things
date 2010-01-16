@@ -55,6 +55,7 @@ private:
 	
 	Bullets bullets;
 	
+	void AddEnemy();
 	typedef std::vector<boost::shared_ptr<Enemy> > Enemies;
 	Enemies enemies;
 	

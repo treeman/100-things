@@ -18,6 +18,17 @@ public:
 		bag.push_back( val );
 		return *this;
 	}
+	ShuffleBag &MakeAvailable( T val )
+	{
+		typename List::iterator it = std::find( rest.begin(), rest.end(), val );
+		
+		if( it != rest.end() ) {
+			rest.erase( it );
+			bag.push_back( val );
+		}
+		
+		return *this;
+	}
 	T Get()
 	{
 		if( Empty() ) {

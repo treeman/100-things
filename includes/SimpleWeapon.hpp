@@ -12,12 +12,16 @@
 
 class SimpleWeapon : public Weapon {
 public:
-	SimpleWeapon();
+	SimpleWeapon( float fire_delay, float effect_volume, int bullet_size );
 protected:
 	boost::shared_ptr<Bullet> GetBullet( Vec2D fire_pos, Vec2D dir );
 	void PlayShootSound();
 	
 	EffectObj eff;
+	float vol;
+	
+	int bullet_size;
+	
 	HgeObj hge;
 };
 

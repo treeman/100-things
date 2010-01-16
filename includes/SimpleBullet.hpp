@@ -5,7 +5,7 @@
 
 class SimpleBullet : public Bullet {
 public:
-	SimpleBullet( Vec2D pos, Vec2D dir );
+	SimpleBullet( Vec2D pos, Vec2D dir, int size );
 	
 	Shape::Rect Bounds() const;
 	
@@ -13,6 +13,7 @@ public:
 	void Render();
 private:
 	HgeObj hge;
+	int size;
 };
 
 class AfroBullet : public Bullet {

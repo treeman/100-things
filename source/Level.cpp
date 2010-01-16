@@ -1,6 +1,7 @@
 #include <boost/foreach.hpp>
 
 #include "includes/Level.hpp"
+#include "includes/SimpleEnemy.hpp"
 
 bool has_time_passed( EnemyInfo e )
 {
@@ -11,11 +12,16 @@ bool operator < ( const EnemyInfo &i1, const EnemyInfo &i2 ) {
 	return i1.time < i2.time;
 }
 
-Level::Level() : curr_info( 0 ), level_time( 0 ), fnt( new hgeFont( "fnt/arial10.fnt" ) )
+Level::Level( World *const _world ) : curr_info( 0 ), level_time( 0 ), fnt( new hgeFont( "fnt/arial10.fnt" ) ), world( _world )
 {
 	show_debug = true;
 	showDebug.reset( new Dator<bool>( show_debug ) );
 	Settings::Get().RegisterVariable( "level_debug", boost::weak_ptr<BaseDator>( showDebug ) );
+	
+	InitEnemyBag( 0.3, 0.49, 0.2, 0.01 );
+	
+	total_enemies = 300;
+	enemies_spawned = 0;
 }
 
 void Level::SetTargetPos( Enemies enemies )
@@ -24,6 +30,11 @@ void Level::SetTargetPos( Enemies enemies )
 	{
 		(*it)->SetTargetPos( GetTargetPos() );
 	}
+}
+
+bool Level::IsComplete()
+{
+	return enemies_spawned < total_enemies;
 }
 
 void Level::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
@@ -39,6 +50,38 @@ void Level::GoalReached( boost::shared_ptr<Enemy> e )
 void Level::EnemyDead( boost::shared_ptr<Enemy> e )
 {
 	FreeTargetPos( e->GetTargetPos() );
+	enemy_bag.MakeAvailable( e->Type() );
+}
+
+boost::shared_ptr<Enemy> Level::GetEnemy()
+{
+	boost::shared_ptr<Enemy> enemy;
+	
+	if( enemies_spawned < total_enemies ) {
+		
+		Vec2D pos( hge->Random_Float( 0, 800 ), -40 );
+		
+		switch( enemy_bag.Get() ) {
+			case ENEMY_MUTANT:
+				enemy.reset( new MutantAfro( pos ) );
+				break;
+			case ENEMY_PIPPI:
+				enemy.reset( new PippiAfro( pos ) );
+				break;
+			case ENEMY_SHOOTER:
+				enemy.reset( new ShooterAfro( pos, world ) );
+				break;
+			case ENEMY_WORM:
+				pos.x = pos.x < 400 ? -100 : 800;
+				enemy.reset( new AfroWorm( pos, 560 ) );
+				break;
+		}
+		
+		++enemies_spawned;
+		
+	}
+	
+	return enemy;
 }
 
 void Level::Update( float dt )
@@ -104,5 +147,34 @@ void Level::FreeTargetPos( Vec2D target )
 	{
 		i->used_pos.erase( it );
 		i->unused_pos.push_front( target );
+	}
+}
+
+void Level::InitEnemyBag( float mutant_perc, float pippi_perc, float shooter_perc, float worm_perc )
+{
+	enemy_bag.Clear();
+	
+	const int num_mutants = (int)( mutant_perc * 100 );
+	for( int i = 0; i < num_mutants; ++i )
+	{
+		enemy_bag.Add( ENEMY_MUTANT );
+	}
+	
+	const int num_pippis = (int)( pippi_perc * 100 );
+	for( int i = 0; i < num_pippis; ++i )
+	{
+		enemy_bag.Add( ENEMY_PIPPI );
+	}
+	
+	const int num_shooters = (int)( shooter_perc * 100 );
+	for( int i = 0; i < num_shooters; ++i )
+	{
+		enemy_bag.Add( ENEMY_SHOOTER );
+	}
+	
+	const int num_worms = (int)( worm_perc * 100 );
+	for( int i = 0; i < num_worms; ++i )
+	{
+		enemy_bag.Add( ENEMY_WORM );
 	}
 }

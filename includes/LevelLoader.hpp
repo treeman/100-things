@@ -5,7 +5,7 @@
 
 class LevelLoader {
 public:
-	LevelLoader();
+	LevelLoader( World *const world );
 	
 	boost::shared_ptr<Level> GetNextLevel();
 	boost::shared_ptr<Level> GetLevel( int num );
@@ -21,6 +21,8 @@ private:
 	typedef std::vector<boost::shared_ptr<Level> > Levels;
 	Levels levels;
 	size_t curr;
+	
+	World *const world;
 };
 
 #endif

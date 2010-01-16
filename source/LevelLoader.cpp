@@ -1,9 +1,9 @@
 #include "includes/System/ErrorHandling.hpp"
 #include "includes/LevelLoader.hpp"
 
-LevelLoader::LevelLoader() : curr( 0 )
+LevelLoader::LevelLoader( World *const _world ) : curr( 0 ), world( _world )
 {
-	boost::shared_ptr<Level> lvl( new Level() );
+	boost::shared_ptr<Level> lvl( new Level( world ) );
 	
 	EnemyInfo i;
 	i.time = 0;

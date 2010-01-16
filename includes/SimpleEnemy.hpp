@@ -12,6 +12,9 @@ public:
 	PippiAfro( Vec2D pos );
 	
 	Shape::Rect Bounds();
+	EnemyType Type() {
+		return ENEMY_PIPPI;
+	}
 
 	bool HasReachedGoal();
 	
@@ -32,6 +35,9 @@ public:
 	MutantAfro( Vec2D pos );
 	
 	Shape::Rect Bounds();
+	EnemyType Type() {
+		return ENEMY_MUTANT;
+	}
 
 	bool HasReachedGoal();
 	
@@ -52,6 +58,9 @@ public:
 	AfroWorm( Vec2D pos, float ground_y );
 	
 	Shape::Rect Bounds();
+	EnemyType Type() {
+		return ENEMY_WORM;
+	}
 
 	bool HasReachedGoal();
 	
@@ -81,6 +90,9 @@ public:
 	ShooterAfro( Vec2D pos, World *const world );
 	
 	Shape::Rect Bounds();
+	EnemyType Type() {
+		return ENEMY_SHOOTER;
+	}
 
 	bool HasReachedGoal();
 	

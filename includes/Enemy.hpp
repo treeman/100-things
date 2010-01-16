@@ -10,12 +10,21 @@
 
 #include "Shakeable.hpp"
 
+enum EnemyType {
+	ENEMY_MUTANT,
+	ENEMY_PIPPI,
+	ENEMY_SHOOTER,
+	ENEMY_WORM
+};
+
 class Enemy : public Shakeable {
 public:
 	Enemy( Vec2D pos );
 	virtual ~Enemy() { }
 	
 	virtual Shape::Rect Bounds() = 0;
+	
+	virtual EnemyType Type() = 0;
 	
 	bool CanKill() const {
 		return can_kill;
