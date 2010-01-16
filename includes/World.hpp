@@ -43,6 +43,7 @@ private:
 	
 	void CheckLevelCompletion();
 	void LevelCompleted();
+	void GameCompleted();
 	void GameOver();
 	
 	boost::shared_ptr<Level> curr_lvl;

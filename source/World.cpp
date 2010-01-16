@@ -34,22 +34,8 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	
 	InitDators();
 	
-//	for( int i = 0; i < 33; ++i ) {
-//		boost::shared_ptr<Enemy> a( new PippiAfro( Vec2D( 8 * i, 0 ) ) );
-//		enemies.push_back( a );
-//	}
-//	for( int i = 33; i < 66; ++i ) {
-//		boost::shared_ptr<Enemy> a( new MutantAfro( Vec2D( 8 * i, 0 ) ) );
-//		enemies.push_back( a );
-//	}
-//	for( int i = 66; i < 99; ++i ) {
-//		boost::shared_ptr<Enemy> a( new ShooterAfro( Vec2D( 8 * i, 0 ), this ) );
-//		enemies.push_back( a );
-//	}
-//	
-//	boost::shared_ptr<Enemy> a( new AfroWorm( Vec2D( 0, 0 ), h - 40 ) );
-//	enemies.push_back( a );
-
+	level_loader->LoadLevels( "levels.lua" );
+	
 	LoadLevel( level_loader->GetNextLevel() );
 	
 	for( int i = 0; i < 100; ++i ) {
@@ -165,6 +151,8 @@ void World::Update( float dt )
 	background->Update( dt );
 	
 	UpdateShake();
+	
+	CheckLevelCompletion();
 }
 
 void World::Render()
@@ -216,11 +204,23 @@ void World::LoadLevel( boost::shared_ptr<Level> lvl )
 	
 void World::CheckLevelCompletion()
 {
-	
+	if( curr_lvl->IsComplete() ) {
+		LevelCompleted();
+	}
 }
 void World::LevelCompleted()
 {
-	
+	if( level_loader->NoLevels() ) {
+		GameCompleted();
+	}
+	else {
+		LoadLevel( level_loader->GetNextLevel() );
+	}
+}
+void World::GameCompleted()
+{
+	level_loader->ResetCounter();
+	LoadLevel( level_loader->GetNextLevel() );
 }
 void World::GameOver()
 {
@@ -330,7 +330,7 @@ void World::ShakeDone()
 
 void World::InitDators()
 {
-	show_bullets = true;
+	show_bullets = false;
 	showBullets.reset( new Dator<bool>( show_bullets ) );
 	Settings::Get().RegisterVariable( "bullets_show", boost::weak_ptr<BaseDator>( showBullets ) );
 	
@@ -338,7 +338,7 @@ void World::InitDators()
 	showBounds.reset( new Dator<bool>( show_bounds ) );
 	Settings::Get().RegisterVariable( "collision_box_show", boost::weak_ptr<BaseDator>( showBounds ) );
 	
-	show_shakeinfo = true;
+	show_shakeinfo = false;
 	showShakeInfo.reset( new Dator<bool>( show_shakeinfo ) );
 	Settings::Get().RegisterVariable( "shake_info_show", boost::weak_ptr<BaseDator>( showShakeInfo ) );
 }

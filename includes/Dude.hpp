@@ -73,6 +73,7 @@ private:
 	void SetRage( float perc );
 	
 	const float rage_decline;
+	Timer rage_decline_timer;
 	
 	const float rage_max_acc;
 	const float rage_min_acc;

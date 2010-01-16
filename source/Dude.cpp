@@ -4,7 +4,7 @@
 #include "includes/World.hpp"
 #include "includes/SimpleWeapon.hpp"
 
-Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), rage_decline( 0.2 ), rage_max_acc( 1400 ), rage_min_acc( 400 ), world( _world )
+Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), rage_decline( 0.1 ), rage_max_acc( 1400 ), rage_min_acc( 400 ), world( _world )
 {
 	dude_tex.Load( "gfx/dudes.png" );
 	
@@ -63,6 +63,8 @@ Dude::Dude( World *const _world ) : Shakeable( 0.5, 0.5 ), rage_decline( 0.2 ), 
 	SetPos( Vec2D( 20, 600 - dude->h ) );
 	
 	SetRage( 0 );
+	
+	rage_decline_timer.Start();
 }
 
 void Dude::MoveLeft()
@@ -111,23 +113,23 @@ void Dude::SetRage( float perc )
 	
 	if( rage < 0.2 ) {
 		dude = dudes[0];
-		weapon.reset( new SimpleWeapon( 0.2, 20, 2 ) );
+		weapon.reset( new SimpleWeapon( 0.12, 20, 2 ) );
 	}
 	else if( rage < 0.4 ) {
 		dude = dudes[1];
-		weapon.reset( new SimpleWeapon( 0.15, 25, 2 ) );
+		weapon.reset( new SimpleWeapon( 0.1, 25, 2 ) );
 	}
 	else if( rage < 0.55 ) {
 		dude = dudes[2];
-		weapon.reset( new SimpleWeapon( 0.12, 30, 3 ) );
+		weapon.reset( new SimpleWeapon( 0.09, 30, 3 ) );
 	}
 	else if( rage < 0.7 ) {
 		dude = dudes[3];
-		weapon.reset( new SimpleWeapon( 0.1, 30, 3 ) );
+		weapon.reset( new SimpleWeapon( 0.08, 30, 3 ) );
 	}
 	else if( rage < 0.9 ) {
 		dude = dudes[4];
-		weapon.reset( new SimpleWeapon( 0.08, 30, 4 ) );
+		weapon.reset( new SimpleWeapon( 0.07, 30, 4 ) );
 	}
 	else if( rage >= 0.9 ) {
 		dude = dudes[5];
@@ -151,7 +153,10 @@ void Dude::Update( float dt )
 {
 	SetOrientation();
 	
-//	SetRage( rage - rage * rage_decline * dt );
+	if( rage_decline_timer.GetTime() >= 1.0 ) {
+		SetRage( rage - rage * rage_decline * rage_decline_timer.GetTime() );
+		rage_decline_timer.Restart();
+	}
 	
 	const Vec2D gravity( 0, 1000 );
 	

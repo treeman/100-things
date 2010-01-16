@@ -7,6 +7,8 @@ class LevelLoader {
 public:
 	LevelLoader( World *const world );
 	
+	void LoadLevels( std::string path );
+	
 	boost::shared_ptr<Level> GetNextLevel();
 	boost::shared_ptr<Level> GetLevel( int num );
 	void ResetCounter() {

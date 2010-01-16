@@ -14,7 +14,7 @@ bool operator < ( const EnemyInfo &i1, const EnemyInfo &i2 ) {
 
 Level::Level( World *const _world ) : curr_info( 0 ), level_time( 0 ), fnt( new hgeFont( "fnt/arial10.fnt" ) ), world( _world )
 {
-	show_debug = true;
+	show_debug = false;
 	showDebug.reset( new Dator<bool>( show_debug ) );
 	Settings::Get().RegisterVariable( "level_debug", boost::weak_ptr<BaseDator>( showDebug ) );
 	
@@ -34,7 +34,7 @@ void Level::SetTargetPos( Enemies enemies )
 
 bool Level::IsComplete()
 {
-	return enemies_spawned < total_enemies;
+	return enemies_spawned >= total_enemies;
 }
 
 void Level::RandomizeTargetPos( boost::shared_ptr<Enemy> a )
