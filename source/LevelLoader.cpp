@@ -158,6 +158,11 @@ void LevelLoader::LoadLevels( std::string file )
 				lvl->infos.push_back( i );	
 			}
 		}
+		else {
+			EnemyInfo i;
+			i.time = 0;
+			lvl->infos.push_back( i );
+		}
 		lua_pop( L, 1 );
 		
 		levels.push_back( lvl );

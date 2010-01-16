@@ -38,10 +38,6 @@ World::World() : dude( new Dude( this ) ), arial10( new hgeFont( "fnt/arial10.fn
 	
 	LoadLevel( level_loader->GetNextLevel() );
 	
-	for( int i = 0; i < 100; ++i ) {
-		AddEnemy();
-	};
-	
 	background.reset( new ABackground() );
 	
 	AddListener( background.get() );
@@ -90,10 +86,8 @@ void World::Update( float dt )
 		}
 	}
 
-//	BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 	for( Bullets::iterator it = bullets.begin(); it != bullets.end(); ++it )
 	{
-//		b->Update( dt );
 		(*it)->Update( dt );
 		
 		for( Bullets::iterator it2 = bullets.begin(); it2 != bullets.end(); ++it2 )
@@ -105,7 +99,7 @@ void World::Update( float dt )
 			}
 		}
 	}
-	
+		
 	BOOST_FOREACH( boost::shared_ptr<Enemy> a, enemies )
 	{
 		if( enemy_out_of_bounds( a ) ) {
@@ -123,8 +117,9 @@ void World::Update( float dt )
 			curr_lvl->GoalReached( a );
 		}
 		
+	
 		a->Update( dt );
-		
+	
 		BOOST_FOREACH( boost::shared_ptr<Bullet> b, bullets )
 		{
 			if( b->Info().target == TARGET_ENEMY && a->Bounds().Overlap( b->Bounds() ) ) {
@@ -132,7 +127,7 @@ void World::Update( float dt )
 			}
 		}
 	}
-	
+		
 	BOOST_FOREACH( WorldListener *listener, listeners )
 	{
 		listener->SetDudePos( dude->GetPos() );
@@ -199,6 +194,9 @@ void World::AddListener( WorldListener *const listener )
 void World::LoadLevel( boost::shared_ptr<Level> lvl )
 {
 	curr_lvl = lvl;
+	for( int i = enemies.size(); i < 100; ++i ) {
+		AddEnemy();
+	};
 }
 	
 void World::CheckLevelCompletion()
